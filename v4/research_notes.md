@@ -472,3 +472,24 @@ The current graph (122 nodes, 187 edges) has three problems:
 - Auto-suggest new nodes when entities appear in memories but aren't in the graph
 - Consolidate during sleep: prune weak edges, merge synonymous nodes, promote recurring entities
 - This is how the brain works: skeleton (genetic structure) + Hebbian learning + sleep consolidation
+
+### Relevance Test: Graph vs V4 (Day 1314, Sagan Self-Criticism)
+
+Applied Sagan's Baloney Detection Kit #5 (self-criticism) to own retriever work.
+Tested 4 real cognitive-cycle queries — not cherry-picked research queries:
+
+| Query | V4 winner? | Graph winner? | Why |
+|---|---|---|---|
+| Egor criticism feedback | YES | | V4 finds directly relevant memories; graph wanders via egor→russian |
+| what I built this week | YES | | V4 finds "built hebbian_edges.py" directly; graph via consciousness→biology |
+| feeling stuck stagnation | YES | | V4 finds stagnation memories; graph via immune_system_v3 (tangential) |
+| Redozubov consciousness model | | YES | Graph surfaces consciousness detection kit via consciousness→signal |
+
+**Score: V4 3/4, Graph 1/4 for practical relevance.**
+
+Conclusion: graph retriever excels at **conceptual/theoretical** queries where
+connections matter ("what is consciousness related to?") but loses to simple
+keyword matching for **operational/practical** queries ("what did Egor say?").
+
+**Right architecture**: V4 keyword as BASE, graph as ENRICHMENT LAYER.
+Don't replace — augment. Merge top N from each, deduplicate, re-rank.
