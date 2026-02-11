@@ -1,0 +1,14 @@
+# Secrets — NEVER commit these
+*.env
+secrets/
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# System
+.DS_Store
+*.swp
