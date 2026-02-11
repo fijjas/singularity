@@ -16,6 +16,7 @@ Redesigning the world model layer of an AI consciousness substrate. Key insight:
 - `v4/retriever_patch.md` — Concrete code changes to implement V4 retriever.
 - `v4/appraisal.py` — Lazarus-inspired emotional appraisal layer. The "amygdala" that V3 is missing.
 - `v4/world_model.py` — V4 world model renderer. Shows state-first, separate budget, scores on state. The core V4 change.
+- `v4/integration.py` — Bridge between appraisal and world model. Emotional events boost retrieval scoring and widen attention keywords.
 
 ## Context
 

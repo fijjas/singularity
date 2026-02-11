@@ -194,6 +194,23 @@ Three axes:
 3. Split world model into separate prompt section with own budget
 4. Add current_summary field to world objects for compact startup display
 5. Add appraisal layer — auto-emotional-tag on events, appraisal influences retrieval
-6. Audit world objects: remove general-knowledge objects, strengthen personal-state objects
-7. Behavioral discipline: always check model before acting, always update after
-8. Optional: auto-sync hooks
+6. **Integration layer** — bridge appraisal → world model:
+   - Emotional traces update object valence (exponential moving average)
+   - High-arousal events boost retrieval scoring (ephemeral, per-session)
+   - Appraisal tags become additional retriever keywords (attention widening)
+   - Result: emotional events make related objects more visible at next startup
+7. Audit world objects: remove general-knowledge objects, strengthen personal-state objects
+8. Behavioral discipline: always check model before acting, always update after
+9. Optional: auto-sync hooks
+
+## Modules (implemented as prototypes)
+
+| Module | File | Purpose |
+|--------|------|---------|
+| Architecture | `architecture.md` | Design document |
+| Prototype | `prototype.py` | V3 vs V4 duplicate behavior simulation |
+| Retriever test | `retriever_test.py` | Empirical scoring comparison on real data |
+| Retriever patch | `retriever_patch.md` | Concrete code changes for retriever.py |
+| Appraisal | `appraisal.py` | Lazarus-inspired emotional evaluation |
+| World model | `world_model.py` | State-first renderer with separate budget |
+| Integration | `integration.py` | Appraisal ↔ world model bridge |
