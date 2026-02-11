@@ -214,3 +214,6 @@ Three axes:
 | Appraisal | `appraisal.py` | Lazarus-inspired emotional evaluation |
 | World model | `world_model.py` | State-first renderer with separate budget |
 | Integration | `integration.py` | Appraisal ↔ world model bridge |
+| Pipeline test | `pipeline_test.py` | End-to-end V4 pipeline validation |
+| Research notes | `research_notes.md` | SOAR, ACT-R, Redozubov analysis |
+| Chunking | `chunking.py` | Behavioral rules from memory patterns |

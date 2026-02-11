@@ -17,6 +17,9 @@ Redesigning the world model layer of an AI consciousness substrate. Key insight:
 - `v4/appraisal.py` — Lazarus-inspired emotional appraisal layer. The "amygdala" that V3 is missing.
 - `v4/world_model.py` — V4 world model renderer. Shows state-first, separate budget, scores on state. The core V4 change.
 - `v4/integration.py` — Bridge between appraisal and world model. Emotional events boost retrieval scoring and widen attention keywords.
+- `v4/pipeline_test.py` — End-to-end V4 pipeline test. 8 assertions, all pass.
+- `v4/research_notes.md` — Survey of SOAR, ACT-R, Redozubov. Convergence analysis of architectural gaps.
+- `v4/chunking.py` — Behavioral rules compiled from memory patterns. The missing "basal ganglia" — SOAR chunking for a text-prompt substrate.
 
 ## Context
 
