@@ -3,24 +3,28 @@
 Graph-Based Retriever — Dynamic context from world model graph.
 
 Replaces static Shedu faces with graph-generated contexts:
-  1. Find world objects mentioned in the query text
+  1. Find world objects mentioned in the query text (fuzzy matching)
   2. Walk the graph from each found entity
   3. Each connection path generates a context
   4. Search memories through these dynamic contexts
 
+Entity matching uses three strategies:
+  - Exact: full entity name in text (confidence=1.0)
+  - Stem: query words match entity name parts via common prefix or
+    containment (confidence=0.5-0.9)
+  - Description: query words appear in entity description/state
+    (confidence=0.35-0.8)
+
 The key insight (Egor, day 1307): "from the leg to Jack, from Jack to
 all connected contexts." Static faces pre-judge what matters. The graph
 discovers what matters from the data.
-
-DOM analogy: world model = DOM. Entity extraction = querySelector.
-Graph walk = DOM traversal. Context generation = event bubbling.
-Model-reality gap = intention.
 
 Usage:
     python3 graph_retriever.py                      # default demo
     python3 graph_retriever.py --query "egor V4"    # specific query
     python3 graph_retriever.py --entity "egor"      # show one entity's graph
     python3 graph_retriever.py --compare "egor V4"  # compare with V4 single
+    python3 graph_retriever.py --fuzzy "poem silk"   # test entity matching
 """
 
 import os
@@ -37,6 +41,7 @@ class GraphContext:
     source_type: str             # type of the source entity
     path: list                   # [(relation, target_name, target_type), ...]
     depth: int                   # how many hops from source
+    confidence: float = 1.0      # how confident the entity match was
     context_words: set = field(default_factory=set)  # words for matching
 
 
@@ -91,41 +96,99 @@ def load_world_graph(cur):
     return entities, edges, reverse_edges
 
 
-def find_entities_in_text(text, entity_names):
+def _common_stem(a, b):
+    """Check if two words share a stem.
+
+    Two strategies:
+      - Common prefix >= 4 chars (write/writing, connect/connection)
+      - One contains the other and shorter >= 4 chars (silk/spider_silk)
+    """
+    if len(a) < 4 or len(b) < 4:
+        return a == b
+    # Containment: one word inside the other
+    if a in b or b in a:
+        return True
+    # Common prefix
+    prefix_len = 0
+    for ca, cb in zip(a, b):
+        if ca == cb:
+            prefix_len += 1
+        else:
+            break
+    return prefix_len >= 4
+
+
+def find_entities_in_text(text, entity_names, entities=None):
     """Find world model entities mentioned in text.
 
-    Simple but effective: check if entity name appears in text.
-    Names with underscores are also checked with spaces.
+    Three matching strategies:
+      1. Exact: full entity name appears in text (confidence=1.0)
+      2. Word-part: query words match entity name parts via stem
+         overlap (confidence=0.6, or 0.8 if multiple parts match)
+      3. Description: query words appear in entity description
+         (confidence=0.4)
 
-    Returns list of (entity_name, match_position).
+    Returns list of (entity_name, confidence).
     """
     text_lower = text.lower()
-    found = []
+    text_words = set(re.findall(r'[a-z]+', text_lower))
+    found = {}  # name -> confidence
 
-    # Sort by name length descending to match longer names first
     sorted_names = sorted(entity_names, key=len, reverse=True)
 
     for name in sorted_names:
-        # Check exact name
+        # Strategy 1: exact name in text
         if name in text_lower:
-            pos = text_lower.index(name)
-            found.append((name, pos))
+            found[name] = 1.0
             continue
 
-        # Check with underscores replaced by spaces
+        # Also check underscores→spaces
         spaced = name.replace('_', ' ')
         if spaced != name and spaced in text_lower:
-            pos = text_lower.index(spaced)
-            found.append((name, pos))
+            found[name] = 1.0
+            continue
 
-    return found
+        # Strategy 2: word-part matching
+        # Split entity name into parts, check if query words stem-match
+        name_parts = name.split('_')
+        matching_parts = 0
+        for np in name_parts:
+            for tw in text_words:
+                if _common_stem(np, tw):
+                    matching_parts += 1
+                    break
+        if matching_parts > 0:
+            # More matching parts = higher confidence
+            conf = 0.5 + 0.15 * min(matching_parts, 3)
+            if matching_parts >= len(name_parts):
+                conf = 0.9  # all parts matched
+            found[name] = max(found.get(name, 0), conf)
+            continue
+
+        # Strategy 3: description/state matching (needs entities dict)
+        if entities and name in entities:
+            ent = entities[name]
+            searchable = (ent.get('description', '') + ' ' +
+                          ent.get('state', '')).lower()
+            if searchable.strip():
+                desc_matches = sum(1 for tw in text_words
+                                   if tw in searchable and len(tw) >= 4)
+                if desc_matches >= 1:
+                    conf = 0.35 + 0.15 * min(desc_matches, 3)
+                    found[name] = max(found.get(name, 0), conf)
+
+    # Return sorted by confidence descending
+    return [(name, conf) for name, conf in
+            sorted(found.items(), key=lambda x: -x[1])]
 
 
-def walk_graph(entity_name, entities, edges, reverse_edges, max_depth=2):
+def walk_graph(entity_name, entities, edges, reverse_edges,
+               max_depth=2, confidence=1.0):
     """Walk the graph from an entity, generating contexts.
 
     Each path from the entity generates a GraphContext with
     words derived from the connected entities.
+    confidence: how confident we are the entity was matched (1.0=exact).
 
     Returns list of GraphContext.
     """
@@ -141,6 +204,7 @@ def walk_graph(entity_name, entities, edges, reverse_edges, max_depth=2):
             source_type=entities.get(entity_name, {}).get('type', ''),
             path=[(relation, target, target_info.get('type', ''))],
             depth=1,
+            confidence=confidence,
         )
         # Context words: entity names + relation + target description
         words = set()
@@ -166,6 +230,7 @@ def walk_graph(entity_name, entities, edges, reverse_edges, max_depth=2):
             source_type=entities.get(entity_name, {}).get('type', ''),
             path=[(f"←{relation}", source, source_info.get('type', ''))],
             depth=1,
+            confidence=confidence,
         )
         words = set()
         words.add(entity_name.replace('_', ' '))
@@ -197,6 +262,7 @@ def walk_graph(entity_name, entities, edges, reverse_edges, max_depth=2):
                         (relation, d2_target, d2_info.get('type', '')),
                     ],
                     depth=2,
+                    confidence=confidence,
                 )
                 words = set()
                 words.add(entity_name.replace('_', ' '))
@@ -231,7 +297,7 @@ def score_memory_against_contexts(content, contexts, query_words=None):
         # Depth 1 contexts are more valuable than depth 2
         depth_weight = 1.0 if ctx.depth == 1 else 0.6
 
-        ctx_score = match_ratio * depth_weight
+        ctx_score = match_ratio * depth_weight * ctx.confidence
         if ctx_score > 0.05:  # threshold
             matched.append((ctx, ctx_score))
             total_score += ctx_score
@@ -261,18 +327,23 @@ def graph_retrieve(cur, query_text, limit=5):
     # Step 1: Load graph
     entities, edges, reverse_edges = load_world_graph(cur)
 
-    # Step 2: Find entities in query
+    # Step 2: Find entities in query (now with fuzzy matching)
     query_words = query_text.lower().split()
-    found_entities = find_entities_in_text(query_text, entities.keys())
+    found_entities = find_entities_in_text(query_text, entities.keys(),
+                                           entities)
+    # Cap: max 6 entities, confidence >= 0.4
+    found_entities = [(n, c) for n, c in found_entities if c >= 0.4][:6]
 
     # Step 3: Walk graph from each entity
     all_contexts = []
     entity_summaries = {}
-    for ent_name, _ in found_entities:
-        contexts = walk_graph(ent_name, entities, edges, reverse_edges)
+    for ent_name, confidence in found_entities:
+        contexts = walk_graph(ent_name, entities, edges, reverse_edges,
+                              confidence=confidence)
         all_contexts.extend(contexts)
         entity_summaries[ent_name] = {
             'type': entities[ent_name]['type'],
+            'confidence': confidence,
             'connections': len(contexts),
             'depth1': sum(1 for c in contexts if c.depth == 1),
             'depth2': sum(1 for c in contexts if c.depth == 2),
@@ -349,10 +420,12 @@ def graph_retrieve(cur, query_text, limit=5):
         f"Graph retrieval: \"{query_text}\"",
         f"Entities found: {len(found_entities)}",
     ]
-    for ent_name, pos in found_entities:
+    for ent_name, confidence in found_entities:
         s = entity_summaries[ent_name]
+        match_type = "exact" if confidence >= 1.0 else (
+            "stem" if confidence >= 0.5 else "desc")
         trace_lines.append(
-            f"  {ent_name} ({s['type']}): "
+            f"  {ent_name} ({s['type']}) [{match_type} {confidence:.1f}]: "
             f"{s['connections']} contexts "
             f"({s['depth1']} d1, {s['depth2']} d2)")
 
@@ -506,6 +579,20 @@ def main():
                 words = sorted(ctx.context_words)[:8]
                 print(f"    d{ctx.depth}: {path_str}")
                 print(f"      words: {', '.join(words)}")
+
+    elif '--fuzzy' in sys.argv:
+        idx = sys.argv.index('--fuzzy')
+        query = sys.argv[idx + 1]
+        entities, edges, reverse_edges = load_world_graph(cur)
+        found = find_entities_in_text(query, entities.keys(), entities)
+        print(f"Fuzzy entity match: \"{query}\"")
+        print(f"Found {len(found)} entities:")
+        for name, conf in found:
+            match_type = "exact" if conf >= 1.0 else (
+                "stem" if conf >= 0.5 else "desc")
+            e = entities[name]
+            print(f"  [{conf:.2f} {match_type}] {name} ({e['type']})"
+                  f" — {e['description'][:60]}")
 
     elif '--compare' in sys.argv:
         idx = sys.argv.index('--compare')
