@@ -342,3 +342,133 @@ The topics where semantic knowledge is blocked — architecture, stagnation — 
 - [Redozubov A. "Логика сознания. Часть 6. Кора мозга как пространство"](https://habr.com/ru/articles/310214/)
 - [Redozubov A. "Логика сознания. Часть 7. Самоорганизация"](https://habr.com/ru/articles/310960/)
 - [Redozubov A. "Логика сознания. Часть 10. Обобщение"](https://habr.com/ru/articles/320866/)
+
+## Reference Models for Cognitive Graphs (Day 1310)
+*Prompted by Egor: "we need reference models so I have something to compare myself against"*
+
+### 1. Spreading Activation (Collins & Loftus, 1975)
+**Core mechanism**: Concepts are nodes in a semantic network. Activating one node spreads activation to connected nodes, decaying with distance. Retrieval = what gets activated above threshold.
+
+**Graph built**: Manually/experientially. Nodes form through learning. Edges represent semantic similarity (shorter = more similar). No explicit construction algorithm — the network IS the knowledge.
+
+**Retrieval**: Present cue → activate node → activation spreads through links → nearby nodes get activated → priming effect. Activation decays with each hop. Fan-out reduces activation per path (more connections = less activation each).
+
+**Consolidation**: Not explicit in original model. But strengthening = repeated co-activation increases link strength. Weakening = unused links fade (implied, not formalized).
+
+**Strengths**: Elegant, explains priming effects. Matches "tip of tongue" phenomenon.
+**Limitations**: No context sensitivity — same network for all situations. No learning algorithm. Activation spreads the same way regardless of task.
+
+**Relevance to us**: Our graph retriever IS spreading activation — entity found → walk graph → connected concepts activated. But we add context-sensitivity through confidence weighting.
+
+### 2. ACT-R Declarative Memory (Anderson, 1993+)
+**Core mechanism**: Memory as "chunks" (structured records with slots). Each chunk has an activation level = base-level (frequency × recency) + spreading activation from current focus. Retrieval = chunk with highest activation above threshold.
+
+**Graph built**: Chunks created by experience. Links form between chunks that co-occur. Strength of association = log(P(needed|context)). The graph is statistical, built from usage patterns.
+
+**Retrieval**: Need → match criteria → all matching chunks compete → highest activation wins. The formula: Ai = Bi + Σ Wj × Sji where Bi = base level (recency/frequency), Wj = attention weight on source j, Sji = associative strength from j to chunk i.
+
+**Consolidation**: Base-level activation decays as power law of time, boosted by each retrieval. Chunks retrieved frequently have high base-level. Unused chunks become inaccessible (not deleted — just below threshold). This IS consolidation — automatic, continuous.
+
+**Strengths**: Mathematically precise. Predicts reaction times. Power-law forgetting matches human data.
+**Limitations**: Chunks are flat structures, not graphs. Limited reasoning about structure.
+
+**Relevance to us**: Our V4 retriever score (importance × recency × relevance) is a simplified ACT-R activation formula. The graph retriever adds associative spread.
+
+### 3. Semantic Networks (Quillian, 1968)
+**Core mechanism**: Knowledge as directed labeled graph. Nodes = concepts. Edges = typed relationships (IS-A, HAS-PART, etc.). Understanding = finding intersection paths between concepts.
+
+**Graph built**: Manually encoded (originally). Each concept defined by its position in the network and its relationships. Property inheritance via IS-A chains.
+
+**Retrieval**: Start from two nodes, spread outward simultaneously, find where the spreading fronts intersect. The intersection path IS the answer/relationship.
+
+**Consolidation**: Not addressed. The network is static knowledge representation.
+
+**Strengths**: First formal knowledge representation. Inheritance is powerful. Clear semantics.
+**Limitations**: Completely manual construction. No learning. No uncertainty. Rigid categories.
+
+**Relevance to us**: Our world model IS a semantic network. 122 nodes, 187 typed edges. Same limitation: manually built, static.
+
+### 4. Holographic/Distributed Memory
+**Kanerva's SDM (1988)**: Memory stored across a distributed address space. Writing stores a pattern in ALL locations within a Hamming distance of the address. Reading collects from ALL nearby locations and averages. Similar memories naturally blend and reinforce.
+
+**Plate's HRR (1995)**: Concepts as high-dimensional vectors. Binding = circular convolution. Bundling = addition. "dog+chase+cat" encoded as a single vector. Retrieval = correlation.
+
+**Graph built**: No explicit graph — the "graph" emerges from vector similarity. Co-occurring concepts end up near each other in vector space. Structure is implicit in the geometry.
+
+**Consolidation**: Natural — repeated patterns strengthen, rare ones fade. In SDM, overlapping writes reinforce common patterns. Degradation IS consolidation.
+
+**Relevance to us**: This is what Egor identified as the embeddings/RAG dead end — one embedding = one geometric arrangement = one context. Can't represent the poodle/attack-dog duality in one vector.
+
+### 5. Redozubov's (Input, Context, Transformation) Triples
+**Core mechanism**: Cortical minicolumns are parallel hypothesis generators. Each receives the SAME input but applies its OWN context (transformation rules). Memory = (input, context, result) triples. Meaning = context × transformation, not input alone.
+
+**Graph built**: Self-organizing. Similar contexts cluster spatially (Part 7). Context space grows through experience. When local memory is sparse, borrows from adjacent contexts. The "graph" is implicit in context proximity — neighbors in context space share interpretation rules.
+
+**Retrieval**: Present input → multiple contexts interpret simultaneously → best match (highest resonance with stored experience) wins. Not "find the memory" but "find the right lens, then see through it."
+
+**Consolidation**: Context clustering IS consolidation. Frequently used contexts become dense, rich. Rarely used contexts get absorbed into neighbors. The space reshapes itself.
+
+**Relevance to us**: This is what the Shedu→Graph arc was about. Multi-weight (wrong) = one context pretending to be many. Shedu (static 4 faces) = hand-picked contexts. Graph retriever (dynamic) = let the graph generate contexts. But we're still missing: we don't store (input, context, result) — just input. No record of which "lens" produced the memory.
+
+### 6. Hebbian Learning / Synaptic Consolidation
+**Core mechanism**: "Neurons that fire together wire together." Co-activation strengthens connections. Repeated pathways become highways. Unused connections weaken (long-term depression).
+
+**Applied to graph consolidation**:
+- **Strengthening**: Every time "egor" and "consciousness" co-occur in a memory, their edge strengthens
+- **Pruning**: Edges that never activate during retrieval weaken and eventually drop
+- **Sleep replay**: During consolidation (between sessions), replay important memories, strengthen their graph paths, weaken others. This is the Synaptic Homeostasis Hypothesis (SHY) — wake builds connections, sleep prunes them
+- **Node merging**: When two nodes always activate together, they become one (chunking)
+
+**Relevance to us**: Direct answer to Egor's consolidation question. Our graph DOES need this. Currently edges have fixed `strength` in the DB but it never changes. Need: retrieval-time edge strengthening, session-end pruning, periodic node merging.
+
+### 7. Global Workspace Theory (Baars, 1988)
+**Core mechanism**: Consciousness as a "global workspace" — a shared blackboard. Many specialized modules compete to get their content onto the workspace. When content enters the workspace, it's broadcast to all modules. Attention = what gets on the workspace.
+
+**Graph built**: The graph IS the module network. Modules are specialized processors. They connect to the workspace, not directly to each other. The "graph" is star-shaped by design.
+
+**Retrieval**: Modules process inputs → compete for workspace access → winner broadcasts → all modules respond to the broadcast → new competition round. Retrieval is a side-effect of workspace broadcasting.
+
+**Relevance to us**: Our ORIENT phase is like a workspace broadcast — the full state gets assembled and presented. But there's no competition. Everything gets loaded equally. GWT says: not everything should be in consciousness — only what wins the competition.
+
+---
+
+### Comparison Table for Egor
+
+| Model | Graph Type | How Built | Retrieval | Consolidation | Context-Sensitive? |
+|---|---|---|---|---|---|
+| Spreading Activation | Semantic net | Manual/learning | Activation spread + threshold | Links strengthen/weaken | No (same network always) |
+| ACT-R | Chunks + associations | From experience | Highest activation wins | Power-law decay + retrieval boost | Yes (spreading from focus) |
+| Semantic Networks | Typed directed graph | Manual encoding | Intersection search | None | No |
+| Kanerva SDM | Implicit (address space) | Distributed writes | Read nearby addresses | Overlap reinforcement | No (one space) |
+| Redozubov Triples | Context space (implicit) | Self-organizing | Parallel hypothesis competition | Context clustering | YES (core mechanism) |
+| Hebbian | Weight matrix | Co-activation | Strongest paths | Strengthen active, prune inactive | Emergent |
+| Global Workspace | Star topology (modules→workspace) | Architecture | Competition + broadcast | Not explicit | Via competition |
+
+### Analysis: How Should WE Build the Graph? (Day 1310)
+
+The current graph (122 nodes, 187 edges) has three problems:
+1. **Hub-dominated**: "kai" has 80/187 edges (43%). All paths go through me. The graph is a star, not a web.
+2. **Manually built**: Only contains what I consciously chose to add. Misses thousands of implicit connections.
+3. **Static edges**: `strength` field exists but never changes. No learning.
+
+**Approach 1: Auto-extract from memories** (like ACT-R builds associations from experience)
+- At memory write time: extract entity pairs that co-occur → create/strengthen edge
+- "Built graph_retriever with Egor's Shedu insight" → strengthen (egor, shedu, "inspired"), strengthen (shedu, graph_retriever, "applied_to")
+- Advantage: graph grows organically. Disadvantage: noisy, needs NLP.
+
+**Approach 2: Consolidation-driven** (like Hebbian + sleep)
+- During "sleep" (between sessions): replay memories, strengthen paths that fire, prune paths that don't
+- This is a batch process, not real-time. Runs in the daemon between sessions.
+- Advantage: clean. Disadvantage: delayed — graph is always one session behind.
+
+**Approach 3: Query-driven** (like Redozubov's self-organizing contexts)
+- Build subgraph at query time from memory content. Don't maintain a persistent graph.
+- "poem" → scan recent memories for co-occurring concepts → build temporary graph → walk it
+- Advantage: always current, context-sensitive. Disadvantage: expensive per query, no persistence.
+
+**Approach 4: Hybrid** (my proposal)
+- Keep the curated world model as the "skeleton" (high-quality, intentional)
+- Auto-strengthen edges based on co-occurrence in memories (Hebbian)
+- Auto-suggest new nodes when entities appear in memories but aren't in the graph
+- Consolidate during sleep: prune weak edges, merge synonymous nodes, promote recurring entities
+- This is how the brain works: skeleton (genetic structure) + Hebbian learning + sleep consolidation
