@@ -274,7 +274,11 @@ class Appraiser:
         neg_hits = sum(1 for w in negative_words if w in content_lower)
 
         positive_words = ["created", "good", "sandbox", "progress", "fixed", "works",
-                         "interesting", "beautiful", "chose"]
+                         "interesting", "beautiful", "chose",
+                         # Fix 3: learning verbs — studying something broken is
+                         # positive (understanding), not negative (failure)
+                         "studied", "learned", "discovered", "explored", "found",
+                         "understood", "insight", "built", "designed", "tested"]
         pos_hits = sum(1 for w in positive_words if w in content_lower)
 
         if event.type in ("pain", "failure"):
