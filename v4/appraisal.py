@@ -94,6 +94,10 @@ class Appraiser:
         (False, False, False): ("sadness", -0.3, 0.3),
     }
 
+    # Emotional momentum — blend new appraisal with previous state
+    # 0.0 = fully reactive (no carry-over), 1.0 = fully inert (never changes)
+    MOMENTUM = 0.3
+
     def __init__(self):
         self.history = []  # recent appraisals for mood computation
 
@@ -136,6 +140,22 @@ class Appraiser:
         # Modulate by relevance and relationship
         valence = base_valence * (0.5 + relevance * 0.5)
         arousal = base_arousal * (0.5 + relevance * 0.5)
+
+        # Fix 1: Stillness — quiet moments aren't sad, they're still.
+        # When nothing is meaningfully relevant, override to stillness.
+        # Threshold 0.25: below this, "relevance" is just accidental keyword
+        # overlap (heartbeats, action logs) — not real emotional content.
+        if relevance < 0.25:
+            emotion_name = "stillness"
+            valence = 0.0
+            arousal = 0.05
+
+        # Fix 2: Emotional momentum — blend with previous state to prevent
+        # ±1.40 valence whiplash between consecutive evaluations.
+        if self.history and self.MOMENTUM > 0:
+            prev = self.history[-1]
+            valence = (1 - self.MOMENTUM) * valence + self.MOMENTUM * prev.valence
+            arousal = (1 - self.MOMENTUM) * arousal + self.MOMENTUM * prev.arousal
 
         # Special cases
         tags = []
