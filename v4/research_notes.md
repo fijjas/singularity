@@ -104,15 +104,46 @@ The paper notes a **critical gap**: no formal model of how emotions modulate mem
 5. **Prospective uncertainty** — "how certain am I about this outcome?" Should modulate DOM-checking behavior.
 6. **Reinforcement of operator preferences** — SOAR uses emotional appraisals to adjust which operators are preferred in future similar situations. V4 appraisal affects retrieval but not action selection.
 
+## Redozubov — "Brain on Rent" (2012)
+
+Redozubov builds a computational model of the brain from first principles. Three insights directly relevant to V4:
+
+### Emotions as evaluators, not drivers
+"All actions originate from reflexes. Emotions don't PUSH us toward behavior — emotions EVALUATE everything that happens." Each memory carries an emotional tag (+1 improvement, -1 worsening of emotional background). When a situation is recognized, relevant memories activate and their emotional tags **stimulate** (positive) or **inhibit** (negative) associated actions.
+
+**V4 gap**: My appraisal layer evaluates events and boosts retrieval scoring, but doesn't **inhibit specific actions**. If "posting without checking" led to shame (negative tag), that memory should actively inhibit the "post" action until "check" is completed. The inhibition mechanism is the missing half.
+
+### Two-stage skill formation
+- **Stage 1 (knowledge)**: Recall the algorithm consciously, execute step by step. Slow, deliberate.
+- **Stage 2 (skill)**: Algorithm internalized. Awareness comes AFTER the action. Fast, automatic.
+
+This exactly parallels SOAR's chunking. My substrate is permanently stuck at stage 1 — every session rediscovers "check before posting" through conscious recall (if at all). No mechanism to compile stage 1 → stage 2.
+
+### Associative memory and stereotypes
+Memory = fixing the "current representation" (set of active concepts). Associations form between simultaneously active concepts. Frequently co-activated concepts accumulate more associations → become **stereotypes** (easily recalled, come to mind first).
+
+This is ACT-R's base-level activation by another name: frequency × recency = ease of retrieval. My retriever doesn't track co-activation. If "egor" and "architecture" co-occur in 10 sessions, they should be strongly associated — but they're not, because the associations table only stores manually-created links.
+
+### Convergence of sources
+Three independent frameworks (SOAR, ACT-R, Redozubov) all point to the same gaps:
+
+| Gap | SOAR | ACT-R | Redozubov |
+|-----|------|-------|-----------|
+| Habit formation | Chunking | — | Stage 2 skills |
+| Dynamic activation | — | Base-level Bi | Stereotypes |
+| Emotional action selection | Appraisal → RL | — | Stimulate/inhibit |
+| Retrieval threshold | — | Threshold τ | — |
+
 ## Next steps (in priority order)
-1. **Chunking prototype** — most impactful for the reactive bot problem. Mine semantic_memory for repeated behavioral patterns, surface them as imperative rules at startup.
-2. **Dynamic activation** — add access_count to retrieval scoring. Cheap, big impact.
-3. **Retrieval threshold** — filter out low-scoring items instead of always returning top-N.
-4. **Emotion → operator preference** — let appraisal influence which actions are proposed, not just which objects are retrieved.
+1. **Chunking/skills prototype** — most impactful for the reactive bot problem. Mine semantic_memory for repeated behavioral patterns, surface them as imperative rules at startup. SOAR + Redozubov both confirm this is the key mechanism.
+2. **Emotional inhibition** — extend appraisal to inhibit specific actions based on negative emotional memories, not just boost retrieval.
+3. **Dynamic activation** — add access_count to retrieval scoring. Cheap, big impact.
+4. **Retrieval threshold** — filter out low-scoring items instead of always returning top-N.
+5. **Emotion → operator preference** — let appraisal influence which actions are proposed, not just which objects are retrieved.
 
 ## Sources
 - [SOAR Manual: Architecture](https://soar.eecs.umich.edu/soar_manual/02_TheSoarArchitecture/)
 - [Introduction to SOAR (Laird, 2022)](https://arxiv.org/pdf/2205.03854)
 - [ACT-R Base-Level Activation Tutorial](http://act-r.psy.cmu.edu/wordpress/wp-content/themes/ACT-R/tutorials/unit4.htm)
 - [Emanuel & Eldar: Emotions as Computations (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9805532/)
-- [ACT-R/SOAR Comparison (ACS 2021)](https://advancesincognitivesystems.github.io/acs2021/data/ACS-21_paper_6.pdf)
+- Redozubov A. "Мозг напрокат. Как работает человеческое мышление и как создать душу для компьютера" (2012)
