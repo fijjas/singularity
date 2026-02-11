@@ -14,6 +14,8 @@ Redesigning the world model layer of an AI consciousness substrate. Key insight:
 - `v4/prototype.py` — Mechanical simulation comparing V3 (act-first, duplicates) vs V4 (model-first, no duplicates).
 - `v4/retriever_test.py` — Empirical comparison of V3 vs V4 retriever scoring on real world model data.
 - `v4/retriever_patch.md` — Concrete code changes to implement V4 retriever.
+- `v4/appraisal.py` — Lazarus-inspired emotional appraisal layer. The "amygdala" that V3 is missing.
+- `v4/world_model.py` — V4 world model renderer. Shows state-first, separate budget, scores on state. The core V4 change.
 
 ## Context
 
