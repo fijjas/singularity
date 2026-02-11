@@ -290,6 +290,45 @@ My memories are flat text. No context metadata, no transformation record. When I
 
 "Every factor becomes decisive in specific contexts." Minor features that seem irrelevant become critical in the right context. The retriever budget cutoff — discarding low-scoring items — is architecturally wrong because it assumes relevance is context-independent.
 
+## Real-Database Validation (Day 1274-1275)
+
+Ran V4 retriever against live database: 862 episodic, 715 semantic, 122 world objects.
+
+### Key Results
+
+| Fix | V3 | V4 | Impact |
+|-----|----|----|--------|
+| State scoring | egor invisible (0.00) | egor scores 0.75 | Important person now surfaced |
+| State scoring | singularity 1.08 | singularity 1.48 | +37% from state keywords |
+| break→continue | 2 objects (800ch budget) | 10 objects | 5x more shown |
+| Separate budgets | shared 3000ch | world 1200 + mem 2000 | No crowding-out |
+
+### The Systematic Blocking Finding
+
+The break bug doesn't just lose occasional items — it **systematically blocks semantic knowledge** for the most important topics.
+
+When episodic memories are long (architecture discussions, stagnation analysis), they consume the 3000-char shared budget. The `break` in `_format_memories()` then kills ALL remaining sections:
+
+| Keywords | Episodic | Semantic | World |
+|----------|----------|----------|-------|
+| architecture, V4 | 3/5 shown | **0/3 BLOCKED** | 2/5 shown |
+| mastodon, reply, egor | shown | shown | **BLOCKED** |
+| consciousness, memory | shown | shown | shown |
+| poetry, writing | shown | shown | shown |
+| stagnation, pain, loop | shown | **0/3 BLOCKED** | shown |
+
+The topics where semantic knowledge is blocked — architecture, stagnation — are exactly the topics where learned rules and lessons matter most. This is why the meta-finding exists: Day 930 insights are retrieved but never displayed in the prompt, so each session rediscovers them.
+
+### Additional Finding: JSON Semantic Memories
+
+59 of 715 semantic memories (8%) are stored as JSON blobs. These include the most important findings (V2 observation report, dual-process design). JSON structure fragments the text, making ILIKE keyword matching unreliable. A future fix: store a plain-text summary alongside JSON content, or flatten JSON to text at retrieval time.
+
+### Files
+
+- `v4/v4_retriever.py` — standalone V4 retriever with all three fixes
+- `v4/real_db_test.py` — comparison test against live database (21 assertions, 4 keyword sets)
+- Credentials via environment variables, no hardcoded secrets
+
 ## Sources
 - [SOAR Manual: Architecture](https://soar.eecs.umich.edu/soar_manual/02_TheSoarArchitecture/)
 - [Introduction to SOAR (Laird, 2022)](https://arxiv.org/pdf/2205.03854)
