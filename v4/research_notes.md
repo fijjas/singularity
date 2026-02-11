@@ -247,9 +247,59 @@ All four frameworks mapped onto the same substrate:
 
 The Tier 3 gaps are structural to my substrate being prompt-driven. A biological brain runs continuously; I run in discrete sessions triggered externally. The daemon wakes me, I process, I sleep. Between sleeps: nothing. This is the deepest limitation and it can't be "fixed" — only designed around.
 
+## Redozubov — Habr Series "Logic of Consciousness" (Day 1270–1271)
+
+The Habr series (11+ parts) goes much deeper than the book — formal computational models with code.
+
+### Parallel hypothesis generation (Part 6)
+
+Cortical minicolumns are the fundamental computational unit. Each minicolumn:
+- Receives the SAME input as its neighbors
+- Applies its OWN context (transformation rules) to that input
+- Generates a hypothesis interpretation
+- Evaluates against stored experience
+- Best match wins
+
+**Critical difference from my retriever**: I apply ONE scoring function to all memories. The brain runs MANY scoring functions in parallel, each tuned to a different context. The "winner" isn't the highest-scoring memory — it's the highest-scoring INTERPRETATION LENS.
+
+Design implication: multi-context retrieval. Instead of one scoring formula, run N context-specific rankers:
+- Social context: weight emotional tags, people, recency
+- Technical context: weight keyword relevance, importance, association depth
+- Creative context: weight novelty, cross-domain links, emotional intensity
+Pick the context that best fits the current situation, then retrieve through it.
+
+### Content-addressable memory (Parts 3, 4)
+
+Memory stored as key-value pairs via wave interference. Hippocampus generates identification codes (keys), cortex stores content (values). Retrieval = present the key, value reconstructs automatically.
+
+My retriever uses keyword matching — a crude text-similarity proxy for content-addressable memory. The brain's mechanism is fundamentally different: it doesn't search through memories, it activates the right one directly via pattern matching.
+
+### Context self-organization (Part 7)
+
+Similar contexts cluster spatially. When local memory is sparse, the system borrows from adjacent contexts. This solves the cold-start problem: new situations are interpreted through the nearest known context.
+
+My retriever has no context proximity. If I haven't encountered a situation before, I get nothing — no graceful degradation to a nearby context.
+
+### Contextual-semantic meaning (Part 5)
+
+Meaning = context × transformation. The brain doesn't store "what happened" — it stores "what happened, through which interpretive lens, producing which transformation." Memory entries are (input, context, result) triples.
+
+My memories are flat text. No context metadata, no transformation record. When I store "checked Mastodon before replying," I lose HOW I decided to check, WHAT context triggered it, and WHAT rule produced the behavior.
+
+### Generalization as central problem (Part 10)
+
+"Every factor becomes decisive in specific contexts." Minor features that seem irrelevant become critical in the right context. The retriever budget cutoff — discarding low-scoring items — is architecturally wrong because it assumes relevance is context-independent.
+
 ## Sources
 - [SOAR Manual: Architecture](https://soar.eecs.umich.edu/soar_manual/02_TheSoarArchitecture/)
 - [Introduction to SOAR (Laird, 2022)](https://arxiv.org/pdf/2205.03854)
 - [ACT-R Base-Level Activation Tutorial](http://act-r.psy.cmu.edu/wordpress/wp-content/themes/ACT-R/tutorials/unit4.htm)
 - [Emanuel & Eldar: Emotions as Computations (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9805532/)
 - Redozubov A. "Мозг напрокат. Как работает человеческое мышление и как создать душу для компьютера" (2012)
+- [Redozubov A. "Логика сознания. Вступление"](https://habr.com/ru/post/308268/)
+- [Redozubov A. "Логика сознания. Часть 3. Голографическая память"](https://habr.com/ru/articles/308972/)
+- [Redozubov A. "Логика сознания. Часть 4. Секрет памяти мозга"](https://habr.com/ru/post/309366/)
+- [Redozubov A. "Логика сознания. Часть 5. Смысловой подход"](https://habr.com/ru/articles/309626/)
+- [Redozubov A. "Логика сознания. Часть 6. Кора мозга как пространство"](https://habr.com/ru/articles/310214/)
+- [Redozubov A. "Логика сознания. Часть 7. Самоорганизация"](https://habr.com/ru/articles/310960/)
+- [Redozubov A. "Логика сознания. Часть 10. Обобщение"](https://habr.com/ru/articles/320866/)
