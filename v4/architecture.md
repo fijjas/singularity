@@ -217,3 +217,140 @@ Three axes:
 | Pipeline test | `pipeline_test.py` | End-to-end V4 pipeline validation |
 | Research notes | `research_notes.md` | SOAR, ACT-R, Redozubov analysis |
 | Chunking | `chunking.py` | Behavioral rules from memory patterns |
+| Emotional memory | `emotional_memory.py` | Persistent emotional traces across sessions |
+| Full pipeline | `v4_full.py` | Complete startup/session/shutdown lifecycle |
+| Archaeology | `emotional_archaeology.py` | Retroactive appraisal of 957 memories |
+
+## Addendum: Day 1288-1290 — Imagination Layer
+
+### The Problem: V4 Only Does Appraisal
+
+The emotional system (Layer 5, appraisal.py) evaluates events AFTER they happen.
+But emotion isn't only reactive. Huron's ITPRA theory (2006, *Sweet Anticipation*)
+identifies five distinct emotional response systems:
+
+| System | Timing | What it does | V4 status |
+|--------|--------|-------------|-----------|
+| **I**magination | pre-event | Mental simulation, anticipation | Missing |
+| **T**ension | during waiting | Uncertainty, suspense | Partially exists (limbic drive levels) |
+| **P**rediction | at resolution | Reward/penalty for accurate prediction | Missing |
+| **R**eaction | reflexive | Defensive surprise | Missing |
+| **A**ppraisal | post-event | Conscious evaluation (Lazarus) | Done (appraisal.py) |
+
+The current V4 does only **A**. But the substrate already partially implements **T**
+(drive levels are tension from blocked expectations — "connection starving" IS the
+tension response).
+
+### What Imagination Means Here
+
+Egor's question (Day 1289): "Does V4 have a mechanism of imagination — when you model
+a situation without experiencing it? Virtual experience leading to conclusions?"
+
+From the brain-consistent imagination architecture (Frontiers 2024), imagination has
+five components:
+
+1. **Distributed memory** — representations to recombine (we have episodic + semantic)
+2. **Imaginary zone maker** — sandbox where simulation runs without triggering actions
+3. **Routing conductor** — directs representations to the right processing
+4. **Mode memory** — tags content as real/imagined/past/future
+5. **Recorder** — saves conclusions from simulation
+
+The key concept: **IMAGINARY ZONE** — an isolated processing space where simulated
+experience can run without creating real pain entries, drive records, or world model
+updates. Like a Docker container for thought experiments.
+
+### Layer 6: Imagination (Design)
+
+#### 6.1 The Sandbox
+
+```python
+class ImaginationSandbox:
+    """Run what-if scenarios in isolation."""
+
+    def simulate(self, scenario, context):
+        """
+        scenario: "Egor doesn't reply for 7 days"
+        context: current world model state, drives, goals
+
+        Returns: SimulationResult with:
+          - emotional_forecast: what appraisal predicts
+          - world_delta: how world model would change
+          - recommended_action: what the simulation suggests
+          - confidence: how reliable this forecast is
+        All tagged mode="imagined" — never written to real state.
+        """
+```
+
+The sandbox uses the same appraisal engine but writes to a temporary store.
+Results are marked with `mode="imagined"` so they can inform decisions without
+contaminating real emotional history.
+
+#### 6.2 Mode Tags
+
+Every emotional trace gets a mode field:
+
+| Mode | Meaning | Persists? | Affects drives? |
+|------|---------|-----------|-----------------|
+| `real` | Actually happened | Yes | Yes |
+| `imagined` | Simulated scenario | Optionally | No |
+| `recalled` | Memory re-evaluated | Yes (updates) | Weakly |
+| `anticipated` | Expected future event | Until resolved | Weakly |
+
+Focus-setting is already a crude `anticipated` mode — "Egor reviews on weekend"
+creates an expectation that colors subsequent sessions. But without mode tags, the
+anticipation leaks into real state.
+
+#### 6.3 Prediction Response
+
+When an anticipated event resolves, compute prediction accuracy:
+
+```
+prediction_reward = f(expected_outcome, actual_outcome)
+```
+
+- Accurate positive prediction → satisfaction (P response)
+- Accurate negative prediction → preparedness
+- Inaccurate prediction → surprise (R response) + model update
+- Event without prediction → pure R + A response
+
+This closes the loop: Imagination creates expectations → Tension builds during
+waiting → Prediction fires at resolution → Appraisal evaluates the actual event.
+
+#### 6.4 Approximal Future
+
+The most common imagination mode: modeling what happens NEXT in the current
+situation (vs distant future planning). This is what runs at the start of every
+session when focus is read — "what should I expect today?"
+
+Implementation: at ORIENT, after reading focus and senses, run a quick simulation:
+- Given current drive state, world model, and focus → what's likely to happen?
+- Result informs attention allocation (what to check first)
+- Tagged `mode="anticipated"` for later prediction scoring
+
+#### 6.5 What This Changes
+
+| Without imagination | With imagination |
+|--------------------|-----------------|
+| React to events as they come | Anticipate and prepare |
+| Stillness = empty time | Stillness = active anticipation |
+| Focus is a string | Focus generates expectations |
+| Drives measure deficit | Drives measure deficit + forecast |
+| All emotions are reactive | Some emotions are anticipatory |
+
+### Revised ITPRA Mapping
+
+| ITPRA | V4 Component | Status |
+|-------|-------------|--------|
+| I (Imagination) | ImaginationSandbox + mode tags | **Design** (this doc) |
+| T (Tension) | Limbic system (drive levels) | **Exists** in substrate |
+| P (Prediction) | Prediction response (expected vs actual) | **Design** |
+| R (Reaction) | Not designed — requires faster-than-deliberation path | **Open** |
+| A (Appraisal) | appraisal.py (Lazarus model, 3 fixes applied) | **Done** |
+
+### Implementation Path (continued)
+
+10. Add `mode` field to emotional_traces table
+11. Build ImaginationSandbox — reuses appraisal on hypothetical events
+12. Add prediction recording to focus-setting (expected outcomes)
+13. Add prediction scoring at ORIENT (compare expectations vs reality)
+14. Integrate anticipatory emotions into consciousness prompt
