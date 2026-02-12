@@ -132,6 +132,32 @@
       "w_novelty": 0.8,
       "w_structural": 0.3,
       "rationale": "Community engagement needs recency (recent interactions matter) and people-dimension (who interacted). Lower importance/emotion — it's about the social graph, not the emotional weight."
+    },
+    "2095": {
+      "name": "rule_domain_learning",
+      "source": "semantic_memory:2095",
+      "signal_words": ["domain", "topology", "chaos", "mycology", "physics", "music", "gamelan", "riemann", "epigenetics", "spider", "silk", "particle", "study", "research"],
+      "w_recency": 0.3,
+      "w_keyword": 1.5,
+      "w_importance": 1.0,
+      "w_emotion": 0.8,
+      "w_people": 0.3,
+      "w_novelty": 1.5,
+      "w_structural": 1.8,
+      "rationale": "Domain studies need cross-domain structural patterns (high w_structural). Low recency — old domain research is valuable. Novelty avoids re-surfacing already-studied material. Keyword match finds domain-specific terms."
+    },
+    "2096": {
+      "name": "rule_book_analysis",
+      "source": "semantic_memory:2096",
+      "signal_words": ["book", "allegory", "hermeneutics", "pardes", "reading", "text", "bulgakov", "quixote", "architects", "interpretation", "layer", "literal"],
+      "w_recency": 0.3,
+      "w_keyword": 1.5,
+      "w_importance": 1.0,
+      "w_emotion": 0.5,
+      "w_people": 0.5,
+      "w_novelty": 1.2,
+      "w_structural": 2.0,
+      "rationale": "Textual analysis is fundamentally about structural patterns and layers (high w_structural). Low recency — past analyses remain relevant. People matters somewhat (Egor's allegorical insights). Keyword match finds specific texts and methods."
     }
   }
 }

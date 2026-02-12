@@ -61,7 +61,7 @@ def generate_contexts_from_experience(conn):
     cur.execute("""
         SELECT id, content, importance FROM semantic_memory
         WHERE category = 'rules' OR category = 'procedure'
-        ORDER BY importance DESC LIMIT 10
+        ORDER BY importance DESC LIMIT 20
     """)
     rules = cur.fetchall()
 
