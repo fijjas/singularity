@@ -65,8 +65,33 @@ Only 3 rules exist in semantic_memory: Mastodon dedup, site style, no-delete. Th
 
 4. **Each processing rule is a micro-context**. The more rules, the more retrieval strategies. This is analogous to minicolumns: each rule "fires" when its signal words match the query, biasing retrieval toward relevant memories.
 
+## Session 274 Update: Diversity Fix
+
+### Problem
+Single-context dominance: one context wins 10/10 results because "best context per item"
+always favors the highest-weighted context.
+
+### Solution
+Round-robin selection across active contexts. Each context contributes its best unique
+item in turn, cycling until top_n is filled.
+
+### Results
+- **No keywords (all 9 contexts active)**: 9 unique contexts in top-10. Each contributes 1 item.
+- **"egor architecture" (9 contexts)**: 9 contexts, overlap with static retriever only 3/10.
+- **"allegory connection pattern" (2 contexts)**: 5/5 split between rule_2087 and baseline.
+
+### Key Insight
+This IS the minicolumn architecture: each processing rule is a column, each fires on its
+own pattern, the ensemble produces a panoramic view. One column can't monopolize attention.
+
+### New Processing Rule
+Added rule_2087 (claim-check): "Before asserting X~Y, test the negative. Bulgakov test."
+Now 4 rules → 4 rule-based contexts (+ focus, goals, drives, baseline = 9 total).
+
 ## Next Steps
-- [ ] Store more processing rules (manually first, then via LLM consolidation)
-- [ ] Test with 10+ rules to see context diversity improve
+- [x] Store more processing rules (added claim-check)
+- [x] Diversity requirement in retriever (round-robin)
+- [ ] Test with 10+ rules to see if quality improves (not just diversity)
 - [ ] Consider: should rules have their own table instead of living in semantic_memory?
 - [ ] Prototype LLM-based rule extraction in consolidation pipeline
+- [ ] Investigate: round-robin mixes high-score and low-score items. Should there be a quality floor?
