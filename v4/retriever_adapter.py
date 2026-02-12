@@ -182,12 +182,12 @@ def retrieve_episodic(cur, keywords, limit=5):
         """)
 
     rows = cur.fetchall()
-    if not rows:
-        return []
 
     # Build items in dynamic retriever format
+    seen_ids = set()
     items = []
-    for id_, content, importance, emotion, created_at in rows:
+    for id_, content, importance, emotion, created_at in (rows or []):
+        seen_ids.add(id_)
         items.append({
             'id': id_,
             'content': content if isinstance(content, str) else str(content)[:500],
@@ -201,6 +201,43 @@ def retrieve_episodic(cur, keywords, limit=5):
     contexts = generate_contexts_from_experience(cur.connection)
     active_contexts = _select_active_contexts(contexts, keywords)
 
+    # Pool D: context-signal-word fetch — each context's signal words pull
+    # older memories that the three-pool strategy misses. This is how the
+    # dynamic retriever finds low-importance creative memories, old Egor
+    # dialogues, etc. that the keyword/recency pools don't surface.
+    all_signal_words = set()
+    for ctx in active_contexts:
+        for sw in ctx.signal_words:
+            if len(sw) > 2:
+                all_signal_words.add(sw)
+    if all_signal_words:
+        like_clauses = " OR ".join([f"content ILIKE %s" for _ in all_signal_words])
+        params = [f"%{sw}%" for sw in all_signal_words]
+        cur.execute(f"""
+            SELECT id, content, importance, emotion, created_at
+            FROM episodic_memory
+            WHERE archived_at IS NULL
+              AND created_at <= NOW() - INTERVAL '7 days'
+              AND ({like_clauses})
+            ORDER BY RANDOM()
+            LIMIT 30
+        """, params)
+        for id_, content, importance, emotion, created_at in cur.fetchall():
+            if id_ not in seen_ids:
+                seen_ids.add(id_)
+                items.append({
+                    'id': id_,
+                    'content': content if isinstance(content, str) else str(content)[:500],
+                    'importance': importance or 0.5,
+                    'emotion': emotion or '',
+                    'created_at': created_at,
+                    'source': 'episodic',
+                })
+
+    # Track which items came from Pool D (context-signal-word fetch)
+    pool_d_ids = set(item['id'] for item in items if item['id'] not in
+                     set(id_ for id_, *_ in (rows or [])))
+
     # Score each item in each context
     per_context = {}
     for ctx in active_contexts:
@@ -213,6 +250,31 @@ def retrieve_episodic(cur, keywords, limit=5):
 
     # Round-robin selection
     selected = _round_robin_select(per_context, limit)
+
+    # Guarantee: Pool D items represent older memories that the three-pool
+    # strategy misses. Ensure at least min(2, pool_d count) survive into
+    # the final result by replacing the lowest-scoring recent items.
+    selected_ids = {item['id'] for item, _, _ in selected}
+    pool_d_in_selected = pool_d_ids & selected_ids
+    guarantee_slots = min(2, len(pool_d_ids)) - len(pool_d_in_selected)
+    if guarantee_slots > 0 and len(selected) >= limit:
+        # Collect best Pool D items not already selected
+        pool_d_scored = []
+        for ctx_name, scored in per_context.items():
+            for item, score in scored:
+                if item['id'] in pool_d_ids and item['id'] not in selected_ids:
+                    pool_d_scored.append((item, ctx_name, score))
+        # Deduplicate by id, keep highest score
+        seen = {}
+        for item, ctx_name, score in pool_d_scored:
+            if item['id'] not in seen or score > seen[item['id']][2]:
+                seen[item['id']] = (item, ctx_name, score)
+        pool_d_best = sorted(seen.values(), key=lambda x: -x[2])
+
+        for i in range(min(guarantee_slots, len(pool_d_best))):
+            worst_idx = min(range(len(selected)), key=lambda j: selected[j][2])
+            selected[worst_idx] = pool_d_best[i]
+            selected_ids.add(pool_d_best[i][0]['id'])
 
     # Convert to production format
     result = []

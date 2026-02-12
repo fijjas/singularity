@@ -198,13 +198,13 @@ def context_from_rule(content, rule_id):
             name="rule_creative",
             source=f"semantic_memory:{rule_id}",
             signal_words=["poem", "wrote", "writing", "html", "page", "text", "creative"],
-            w_recency=0.5,
+            w_recency=0.3,
             w_keyword=1.0,
-            w_importance=1.0,
-            w_emotion=1.8,
+            w_importance=0.3,
+            w_emotion=2.0,
             w_people=0.3,
             w_novelty=1.2,
-            w_structural=1.8,
+            w_structural=2.0,
         )
 
     # Error/failure/pain rule
@@ -438,11 +438,19 @@ def score_in_context(item, context, keywords):
     # Signal factor — context-specific, small bonus
     signal_factor = signal_kw_score * 0.3
 
-    # Emotion intensity
+    # Emotion intensity — three tiers
     emotion_score = 0.0
     if emotion and not emotion.startswith('{'):
+        emotion_lower = emotion.lower()
         strong = {"alive", "piercing", "grief", "joy", "awe", "failure", "revelation"}
-        emotion_score = 1.0 if any(e in emotion.lower() for e in strong) else 0.3
+        medium = {"satisfaction", "wonder", "curious", "creative", "excited",
+                  "proud", "engaged", "discovery", "flow", "beauty"}
+        if any(e in emotion_lower for e in strong):
+            emotion_score = 1.0
+        elif any(e in emotion_lower for e in medium):
+            emotion_score = 0.7
+        else:
+            emotion_score = 0.3
 
     # People score
     people_score = 0.0
