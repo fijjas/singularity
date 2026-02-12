@@ -117,15 +117,8 @@ def find_missing_edges(cooccurrences, entity_freq, edges, reverse_edges,
 def main():
     import psycopg2
 
-    db_cfg = {
-        'host': os.environ.get('DB_HOST', 'localhost'),
-        'port': int(os.environ.get('DB_PORT', 5433)),
-        'user': os.environ.get('DB_USER', 'kai'),
-        'password': os.environ.get('DB_PASS',
-                                    'bys2kCtE0DQqRsoEYsSZBtelYS5wFAhGVm7drGxd'),
-        'dbname': os.environ.get('DB_NAME', 'kai_mind'),
-    }
-    conn = psycopg2.connect(**db_cfg)
+    from db_config import DB_CONFIG
+    conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
 
     entities, edges, reverse_edges = load_world_graph(cur)

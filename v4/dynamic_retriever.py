@@ -26,14 +26,7 @@ import sys
 import json
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
-
-DB_CONFIG = {
-    'host': 'localhost',
-    'port': 5433,
-    'user': 'kai',
-    'password': 'bys2kCtE0DQqRsoEYsSZBtelYS5wFAhGVm7drGxd',
-    'dbname': 'kai_mind'
-}
+from db_config import DB_CONFIG
 
 
 @dataclass
