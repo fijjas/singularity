@@ -439,24 +439,44 @@ def run_dynamic_retrieval(keywords=None, top_n=10, verbose=True):
     if verbose:
         print(f"\nActive contexts for this query: {[c.name for c in active_contexts]}")
 
-    # 4. Score each memory in each active context, find best context per item
-    results = []  # (item, best_context, best_score)
+    # 4. Score each memory in each context, collect per-context ranked lists
+    per_context = {ctx.name: [] for ctx in active_contexts}
 
     for item in items:
-        best_ctx = None
-        best_score = -1
-
         for ctx in active_contexts:
             score = score_in_context(item, ctx, keywords)
-            if score > best_score:
-                best_score = score
-                best_ctx = ctx
+            per_context[ctx.name].append((item, ctx, score))
 
-        results.append((item, best_ctx, best_score))
+    # Sort each context's list by score
+    for name in per_context:
+        per_context[name].sort(key=lambda x: x[2], reverse=True)
 
-    # 4. Sort by score, take top N
-    results.sort(key=lambda x: x[2], reverse=True)
-    top_results = results[:top_n]
+    # 5. Diverse selection: round-robin across contexts
+    top_results = []
+    seen_ids = set()
+    ctx_names = [c.name for c in active_contexts]
+    ctx_idx = {name: 0 for name in ctx_names}  # pointer per context
+    round_num = 0
+
+    while len(top_results) < top_n and round_num < 50:
+        added_this_round = False
+        for name in ctx_names:
+            if len(top_results) >= top_n:
+                break
+            candidates = per_context[name]
+            while ctx_idx[name] < len(candidates):
+                item, ctx, score = candidates[ctx_idx[name]]
+                ctx_idx[name] += 1
+                item_key = (item['source'], item['id'])
+                if item_key not in seen_ids:
+                    seen_ids.add(item_key)
+                    top_results.append((item, ctx, score))
+                    added_this_round = True
+                    break
+            # else: this context exhausted
+        round_num += 1
+        if not added_this_round:
+            break
 
     # 5. Display
     if verbose:
