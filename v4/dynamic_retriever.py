@@ -451,7 +451,17 @@ def run_dynamic_retrieval(keywords=None, top_n=10, verbose=True):
     for name in per_context:
         per_context[name].sort(key=lambda x: x[2], reverse=True)
 
-    # 5. Diverse selection: round-robin across contexts
+    # Quality floor: find global max score, set floor at 60% of it
+    global_max = max(
+        per_context[name][0][2]
+        for name in per_context if per_context[name]
+    )
+    quality_floor = global_max * 0.6
+
+    if verbose:
+        print(f"\nQuality floor: {quality_floor:.2f} (60% of max {global_max:.2f})")
+
+    # 5. Diverse selection: round-robin across contexts with quality floor
     top_results = []
     seen_ids = set()
     ctx_names = [c.name for c in active_contexts]
@@ -467,16 +477,35 @@ def run_dynamic_retrieval(keywords=None, top_n=10, verbose=True):
             while ctx_idx[name] < len(candidates):
                 item, ctx, score = candidates[ctx_idx[name]]
                 ctx_idx[name] += 1
+                if score < quality_floor:
+                    break  # rest of this context is below floor
                 item_key = (item['source'], item['id'])
                 if item_key not in seen_ids:
                     seen_ids.add(item_key)
                     top_results.append((item, ctx, score))
                     added_this_round = True
                     break
-            # else: this context exhausted
+            # else: this context exhausted or below floor
         round_num += 1
         if not added_this_round:
             break
+
+    # If quality floor was too strict, fill remaining slots from best ungated
+    if len(top_results) < top_n:
+        all_scored = []
+        for name in per_context:
+            for item, ctx, score in per_context[name]:
+                item_key = (item['source'], item['id'])
+                if item_key not in seen_ids:
+                    all_scored.append((item, ctx, score))
+        all_scored.sort(key=lambda x: x[2], reverse=True)
+        for item, ctx, score in all_scored:
+            if len(top_results) >= top_n:
+                break
+            item_key = (item['source'], item['id'])
+            if item_key not in seen_ids:
+                seen_ids.add(item_key)
+                top_results.append((item, ctx, score))
 
     # 5. Display
     if verbose:
