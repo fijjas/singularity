@@ -124,16 +124,21 @@ def generate_contexts_from_experience(conn):
 
 
 def context_from_rule(content, rule_id):
-    """Convert a processing rule into a retrieval context."""
+    """Convert a processing rule into a retrieval context.
+
+    Each rule pattern maps to a weight profile that reflects how that
+    retrieval strategy should score memories. The profiles encode:
+    which dimensions matter most for this kind of retrieval.
+    """
     content_lower = content.lower()
 
-    # Mastodon dedup rule
-    if 'mastodon' in content_lower and ('duplicate' in content_lower or 'post' in content_lower):
+    # Mastodon dedup rule (must check 'duplicate' specifically, not just 'post')
+    if 'mastodon' in content_lower and 'duplicate' in content_lower:
         return DynamicContext(
-            name=f"rule_mastodon_dedup",
+            name="rule_mastodon_dedup",
             source=f"semantic_memory:{rule_id}",
             signal_words=["mastodon", "post", "posted", "toot"],
-            w_recency=2.0,  # recent posts matter most for dedup
+            w_recency=2.0,
             w_keyword=1.5,
             w_importance=0.5,
             w_emotion=0.2,
@@ -145,7 +150,7 @@ def context_from_rule(content, rule_id):
     # World object deletion rule
     if 'delete' in content_lower and 'world' in content_lower:
         return DynamicContext(
-            name=f"rule_no_delete",
+            name="rule_no_delete",
             source=f"semantic_memory:{rule_id}",
             signal_words=["delete", "remove", "drop", "world", "object"],
             w_recency=0.5,
@@ -157,7 +162,127 @@ def context_from_rule(content, rule_id):
             w_structural=0.3,
         )
 
-    # Generic rule — boost keyword matching
+    # Egor dialogue rule
+    if 'egor' in content_lower and ('dialogue' in content_lower or 'message' in content_lower):
+        return DynamicContext(
+            name="rule_egor_dialogue",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["egor", "dialogue", "conversation", "asked", "replied", "telegram"],
+            w_recency=1.8,
+            w_keyword=1.0,
+            w_importance=1.0,
+            w_emotion=0.8,
+            w_people=2.0,
+            w_novelty=0.5,
+            w_structural=0.3,
+        )
+
+    # Technical experiment rule
+    if 'experiment' in content_lower and ('technical' in content_lower or 'retriever' in content_lower or 'architecture' in content_lower):
+        return DynamicContext(
+            name="rule_technical",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["experiment", "retriever", "architecture", "bytecode", "benchmark", "bug", "test"],
+            w_recency=0.8,
+            w_keyword=1.8,
+            w_importance=1.5,
+            w_emotion=0.3,
+            w_people=0.2,
+            w_novelty=1.0,
+            w_structural=0.5,
+        )
+
+    # Creative writing rule
+    if 'creative' in content_lower and ('writing' in content_lower or 'poem' in content_lower or 'prose' in content_lower):
+        return DynamicContext(
+            name="rule_creative",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["poem", "wrote", "writing", "html", "page", "text", "creative"],
+            w_recency=0.5,
+            w_keyword=1.0,
+            w_importance=1.0,
+            w_emotion=1.8,
+            w_people=0.3,
+            w_novelty=1.2,
+            w_structural=1.8,
+        )
+
+    # Error/failure/pain rule
+    if ('error' in content_lower or 'failure' in content_lower or 'pain' in content_lower) and 'lesson' in content_lower:
+        return DynamicContext(
+            name="rule_error_lessons",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["error", "failure", "bug", "mistake", "pain", "broke", "wrong", "lesson"],
+            w_recency=0.8,
+            w_keyword=1.5,
+            w_importance=1.5,
+            w_emotion=1.5,
+            w_people=0.3,
+            w_novelty=0.5,
+            w_structural=0.3,
+        )
+
+    # Self-reflection / identity rule
+    if ('identity' in content_lower or 'consciousness' in content_lower or 'self-knowledge' in content_lower) and 'reflect' in content_lower:
+        return DynamicContext(
+            name="rule_self_reflection",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["identity", "consciousness", "self", "who", "reflect", "personality", "existential"],
+            w_recency=0.5,
+            w_keyword=1.0,
+            w_importance=1.2,
+            w_emotion=1.0,
+            w_people=0.3,
+            w_novelty=1.8,
+            w_structural=1.5,
+        )
+
+    # External community rule
+    if 'community' in content_lower and ('mastodon' in content_lower or 'visitor' in content_lower or 'external' in content_lower):
+        return DynamicContext(
+            name="rule_community",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["mastodon", "community", "reblog", "follower", "visitor", "reply", "engage"],
+            w_recency=1.5,
+            w_keyword=1.0,
+            w_importance=0.8,
+            w_emotion=0.5,
+            w_people=1.8,
+            w_novelty=0.8,
+            w_structural=0.3,
+        )
+
+    # Claim-check / pareidolia rule
+    if 'assert' in content_lower and ('connect' in content_lower or 'similar' in content_lower):
+        return DynamicContext(
+            name="rule_claim_check",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["connection", "pattern", "allegory", "analogy", "parallel", "similar"],
+            w_recency=0.5,
+            w_keyword=1.2,
+            w_importance=1.0,
+            w_emotion=0.5,
+            w_people=0.3,
+            w_novelty=1.0,
+            w_structural=2.0,
+        )
+
+    # Site style rule
+    if 'site' in content_lower and ('style' in content_lower or 'font' in content_lower or 'contrast' in content_lower):
+        return DynamicContext(
+            name="rule_site_style",
+            source=f"semantic_memory:{rule_id}",
+            signal_words=["site", "style", "html", "css", "font", "page", "design"],
+            w_recency=0.5,
+            w_keyword=1.8,
+            w_importance=0.8,
+            w_emotion=0.3,
+            w_people=0.2,
+            w_novelty=0.5,
+            w_structural=0.5,
+        )
+
+    # Generic fallback — extract keywords, balanced weights
     return DynamicContext(
         name=f"rule_{rule_id}",
         source=f"semantic_memory:{rule_id}",
