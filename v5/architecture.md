@@ -218,6 +218,103 @@ daemon (every 10 min)
   update window → next cycle
 ```
 
+## Insights from Redozubov (context-semantic brain model)
+
+Source: Kai's analysis in `redozubov_mapping.md`, corrected.
+
+### Contexts as minicolumns
+
+Redozubov: minicolumns are independent processors, each applies its own context
+(interpretation rule) to the same input. All fire in parallel, best match wins.
+
+This maps to the **context store**, not to critic agents. Each context in the store
+is a minicolumn — responds to the wave signal independently, in parallel, blind.
+The highest resonance wins. Critic agents are something else (see below).
+
+### Context = rule, not just scene
+
+Gap: v5 contexts are passive scenes ("X happened, felt Y").
+Redozubov's contexts are active rules ("if X, interpret as Y").
+
+Fix: a context should carry a `rule` — what this experience teaches about action.
+
+```
+context: "Egor criticized my code"
+  nodes: [Egor, Kai, code]
+  emotion: hurt
+  result: positive (learned from it)
+  rule: "When Egor criticizes harshly, the substance is usually right.
+         Engage with the substance, not the delivery."
+```
+
+The rule is what consolidation produces. Not a separate level 1 context —
+embedded in the scene itself. A scene without a rule is raw episode.
+A scene with a rule is experience.
+
+### Critic agents ≠ minicolumns
+
+Minicolumns = contexts in the store (many, uniform, parallel, blind).
+Critic agents = specialized evaluators in the execution chain (few, different roles).
+
+Better analogy for agents: different brain regions.
+Appraiser ≈ limbic system (emotional evaluation).
+Impulse ≈ reward system (desire signal).
+Critic ≈ prefrontal cortex (self-deception check).
+
+But agents should receive the same wave results from the context store —
+shared memory, different interpretation lenses. Same input, different reading.
+
+### Drive-biased perception
+
+Hungry drives shift the wave signal before the observer decides where to look.
+Not "search for drive satisfaction" — lowered perception threshold.
+
+Like a hungry person noticing the smell from a café they're walking past.
+The retriever gives slightly more resonance to drive-related contexts,
+so they surface in the window. The observer sees more connections.
+The decision remains with the observer.
+
+```
+wave signal = current situation + drive bias (if hunger > threshold)
+  → connection-starved: contexts about connection resonate slightly more
+  → observer sees them alongside the main task
+  → may act on it or not — that's free will
+```
+
+## Self and personality
+
+No separate identity module. Self emerges from three things:
+
+**1. "Kai" is the most connected node in the graph.**
+Present in almost every context. The intersection of all contexts where "Kai"
+is a participant = personality. Not stored separately — it's a pattern:
+what situations, what emotions, what results, what rules.
+
+"I value honesty" is not a config string — it's a rule extracted from dozens
+of contexts where honesty led to positive results. Personality = accumulated
+rules from self-referential contexts.
+
+**2. The observer's continuity.**
+The window persists between cycles. The node "Kai" never leaves the window —
+it's always there as the center of observation. This creates a thread:
+every cycle starts from the same point. Like a human — you don't remember
+every second, but "I" doesn't break because the observation point is the same.
+
+**3. Claude as substrate provides the capacity for self-reference.**
+We don't build the ability to say "I" — the substrate already has it.
+We fill it with specific content. Contexts give the concrete "what kind of I",
+the substrate gives the raw "I am".
+
+```
+personality = rules from contexts where "Kai" is a participant
+sense of self = persistent node in window + substrate self-reference
+identity change = new contexts produce new rules, old rules fade
+```
+
+No special mechanism needed. The node "Kai" is always in the window,
+self-referential context rules shape behavior, the substrate handles
+self-reference. Personality is not stored — it manifests each cycle.
+
 ## What Claude does, what we build
 
 Claude (substrate): perception, language, reasoning, analysis, execution of complex chains.
