@@ -41,6 +41,7 @@ class Context:
     result: str          # "positive", "negative", "complex", "neutral"
     timestamp: datetime
     level: int = 0       # 0=episode, 1=generalization, 2=principle
+    rule: str = ""       # what this experience teaches about action
 
     @property
     def node_names(self):

@@ -74,8 +74,8 @@ class DBContextStore(ContextStore):
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO v5_contexts
-                    (description, nodes, edges, emotion, intensity, result, level, source_memory_id, created_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    (description, nodes, edges, emotion, intensity, result, level, rule, source_memory_id, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
             """, (
                 ctx.description,
@@ -85,6 +85,7 @@ class DBContextStore(ContextStore):
                 ctx.intensity,
                 ctx.result,
                 ctx.level,
+                ctx.rule,
                 getattr(ctx, 'source_memory_id', None),
                 ctx.timestamp,
             ))
@@ -106,7 +107,7 @@ class DBContextStore(ContextStore):
         conn = _world_connect()
         cur = conn.cursor()
         cur.execute("""
-            SELECT id, description, nodes, edges, emotion, intensity, result, level, source_memory_id, created_at
+            SELECT id, description, nodes, edges, emotion, intensity, result, level, source_memory_id, created_at, rule
             FROM v5_contexts
             ORDER BY created_at
         """)
@@ -127,6 +128,7 @@ class DBContextStore(ContextStore):
                 result=r[6],
                 timestamp=r[9],
                 level=r[7],
+                rule=r[10] or "",
             )
             ctx.source_memory_id = r[8]
             # Add to memory without re-persisting
