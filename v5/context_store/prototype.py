@@ -42,6 +42,9 @@ class Context:
     timestamp: datetime
     level: int = 0       # 0=episode, 1=generalization, 2=principle
     rule: str = ""       # what this experience teaches about action
+    sources: list[int] = field(default_factory=list)  # source context IDs (for generalizations)
+    when_day: int = 0    # virtual day number
+    when_cycle: int = 0  # cycle within the day
 
     @property
     def node_names(self):

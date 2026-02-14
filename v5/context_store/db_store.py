@@ -74,8 +74,9 @@ class DBContextStore(ContextStore):
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO v5_contexts
-                    (description, nodes, edges, emotion, intensity, result, level, rule, source_memory_id, created_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    (description, nodes, edges, emotion, intensity, result, level, rule,
+                     sources, when_day, when_cycle, source_memory_id, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
             """, (
                 ctx.description,
@@ -86,6 +87,9 @@ class DBContextStore(ContextStore):
                 ctx.result,
                 ctx.level,
                 ctx.rule,
+                ctx.sources or [],
+                ctx.when_day or None,
+                ctx.when_cycle or None,
                 getattr(ctx, 'source_memory_id', None),
                 ctx.timestamp,
             ))
@@ -107,7 +111,8 @@ class DBContextStore(ContextStore):
         conn = _world_connect()
         cur = conn.cursor()
         cur.execute("""
-            SELECT id, description, nodes, edges, emotion, intensity, result, level, source_memory_id, created_at, rule
+            SELECT id, description, nodes, edges, emotion, intensity, result, level,
+                   source_memory_id, created_at, rule, sources, when_day, when_cycle
             FROM v5_contexts
             ORDER BY created_at
         """)
@@ -129,6 +134,9 @@ class DBContextStore(ContextStore):
                 timestamp=r[9],
                 level=r[7],
                 rule=r[10] or "",
+                sources=list(r[11] or []),
+                when_day=r[12] or 0,
+                when_cycle=r[13] or 0,
             )
             ctx.source_memory_id = r[8]
             # Add to memory without re-persisting
