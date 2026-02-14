@@ -126,6 +126,38 @@ survival (be needed)
 The chain is not hardcoded — it grew from contexts.
 Alternative branches appear when new contexts show other paths.
 
+## Long-term planning and delayed evaluation
+
+Not every action has an immediate result. Studying for months, writing code that pays off later — the result is unknown at the time.
+
+Retrospective chain linking: when a later context (success) shares objects with an earlier one (preparation), consolidation connects them into a causal chain.
+
+```
+context 1: [studied retriever, neutral, ?]
+context 2: [wrote new retriever, curiosity, +]
+context 3: [Egor praised retriever, warmth, ++]
+
+consolidation links 1 → 2 → 3 via shared object "retriever"
+  → retrospectively: studying was part of the success chain
+```
+
+If the chain never closes — drives serve as intermediate evaluation. Understanding or growth fed? That's signal enough. Result stays "?" until something connects, or fades over time.
+
+Generalization itself is a learned skill, not a built-in mechanism. A human doesn't know how to generalize from birth — they learn by doing it.
+
+```
+context: "Egor asked to look back at income and generalize"
+  action: looked back, found chain, made conclusion
+  result: succeeded
+  → stored as experience of HOW TO GENERALIZE
+
+next time: retriever finds this context
+  → already knows how to do retrospective analysis
+     not because it's hardcoded, but because it did it before
+```
+
+Failed generalizations are also contexts. "Thought X caused Y, turned out wrong" — negative experience of generalizing. Over time, learns to generalize better.
+
 ## Imagination
 
 Testing outcomes without acting. Same pipeline, no render step.
