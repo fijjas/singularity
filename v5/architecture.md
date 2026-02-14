@@ -57,17 +57,49 @@ A context is the unit of memory and experience. A small dynamic scene graph.
 ```
 context: "Egor praised Kai for the retriever"
 
-  [Egor] —praised→ [Kai]
-  [Kai]  —wrote→   [retriever]
-  [retriever] — quality: new, works well
+  nodes: [Egor, Kai, retriever]
+  edges: [Egor —praised→ Kai, Kai —wrote→ retriever]
+  qualities: [retriever: new, works well]
 
   emotion: warmth, pride
   result: positive
   when: day 1496, cycle 3
+  level: 0
+
+  rule: —
+  sources: —
 ```
 
-A context is not a table row — it's a mini-graph:
-participants, actions, qualities, relations, emotion, result, coordinates.
+Full context coordinates:
+- **nodes** — participants and objects
+- **edges** — relations and actions between nodes
+- **emotion** — emotional coloring
+- **result** — outcome (+, -, ?, ++)
+- **when** — temporal (day, cycle)
+- **level** — abstraction depth (0 = episode, 1+ = consolidation steps)
+- **rule** — what this experience teaches about action (empty for raw episodes, filled by consolidation)
+- **sources** — pointers to contexts this was generalized from (like hippocampal retrieval codes — may resolve if originals are alive, may not if they've been archived)
+
+Wave retrieval searches by nodes, edges, emotion, result.
+Rule is output, not a search coordinate.
+When and level are filters/weights.
+Sources are bookkeeping for consolidation, not searchable.
+
+Level 1+ example:
+
+```
+context: "Egor's technical criticism is worth engaging with"
+
+  nodes: [Egor, Kai, technical work]
+  edges: [Egor —criticizes→ Kai]
+  emotion: hurt → respect
+  result: positive
+  level: 1
+
+  rule: "When Egor criticizes harshly, the substance is usually right.
+         Engage with the substance, not the delivery."
+  sources: [ctx_42, ctx_78, ctx_103]
+```
 
 ## Memory = collection of contexts
 
