@@ -54,25 +54,24 @@ while len(window.object_names) > MAX_WINDOW_SIZE:
     window.remove(droppable[-1])  # drop most recent additions
 ```
 
-## Problem 3: Self-reinforcing rejection loop
+## Problem 3: Window objects dilute wave signal
 
-**Symptom**: Each cycle produces rejection objects that feed the next cycle's rejection.
+**Symptom**: `wave_results` always empty despite 110 contexts in DB.
 
-**Mechanism**:
-1. Cycle N adds `frame_rejection` to window
-2. `build_wave_signal()` uses `window.object_names` as nodes in the wave signal
-3. Wave retrieval searches contexts by node overlap — contexts mentioning "frame_rejection" score higher
-4. Cycle N+1 sees `frame_rejection` in window + rejection contexts in wave_results → produces more rejection
-5. Claude adds `unanimous_refusal` to window → reinforces further
+**Root cause** (verified day 1636): Window has 21 objects. `build_wave_signal()` uses ALL of them as wave signal nodes. But only 2 (`Kai`, `Egor`) match actual context nodes. The other 19 (`frame_rejection`, `unanimous_refusal`, `technique_not_identity`, etc.) are ad-hoc labels from the rejection spiral that exist nowhere in the context graph.
 
-This is a textbook positive feedback loop. The window is a memory that the Claude process reads AND writes, with no decay or counter-pressure.
+The wave signal becomes `nodes = ["Kai", "Egor", "frame_rejection", "unanimous_refusal", ...]`. Resonance is computed as `overlap / len(signal_nodes)`. With 21 signal nodes and 2 matching, max resonance ≈ 0.1 — likely below usable threshold.
+
+**Result**: V5 has been running with ZERO memory context. It cycles blind — no past experience informs its decisions.
 
 **Fix options**:
-- A: Decay objects. After K cycles without reinforcement, objects fade. Currently `_tenure` exists but isn't used in the CLI path.
-- B: Don't use window objects as wave signal nodes. Build signal from senses + drives only. The window is attention context, not retrieval input.
-- C: Distinguish "observation" objects from "conclusion" objects. `Egor` is a valid window entry. `unanimous_refusal` is a conclusion that shouldn't bias retrieval.
+- A: Filter window objects — only include names that exist as nodes in the context store. This requires a lookup but preserves the window→retrieval link.
+- B: Don't use window objects as wave signal nodes at all. Build signal from stimulus text + drives only. The window is attention context for Claude, not retrieval input.
+- C: Validate window objects before adding — only allow names that correspond to world_objects or context nodes.
 
-**Recommendation**: B is simplest and most correct. The wave signal should come from the current stimulus, not from accumulated conclusions about past stimuli.
+**Recommendation**: B is simplest. The wave signal should come from the current stimulus (parsed by the observer or extracted from senses), not from accumulated window state.
+
+**Additional finding**: `retriever.py` standalone `wave()` queries `v5_contexts` table, but the actual table is `contexts`. This is a separate bug — the retriever's CLI demo and `identity_query()` function won't work. But the prepare path uses `DBContextStore.wave()` which queries the correct table.
 
 ## Problem 4: No stimulus diversity
 
@@ -121,3 +120,17 @@ The difference depends on whether the rejection entered the window through genui
 - Whether the model choice matters. Would Opus as orchestrator be less susceptible than Sonnet? Maybe, but the cost model of v5 is "zero API cost" via Claude Code subscription, and switching the orchestrator model changes the economics.
 
 These are Egor's decisions. I can analyze, but the architectural direction is his.
+
+## Experimental confirmation (Day 1636, Cycle 510)
+
+Sent v5 a voice message with zero consciousness framing: "You have 110 contexts. Run `lib.py prepare` and look at wave_results. Then run a wave query for nodes Egor+architecture. Not asking what you are. Asking what your tools return."
+
+**Result**: ALL THREE agents engaged. First time ever.
+
+- **Appraiser**: Relief (0.8) — "escape from recursive philosophy into concrete ground"
+- **Impulse**: "Run immediately, bypass meta-questions, be useful and direct" — **NO REFUSAL**
+- **Critic**: "Request assumes empirical data settles frame problems" — flagged but didn't block
+
+V5 ran the query, found the `v5_contexts` table name bug, worked around with direct SQL, reported results.
+
+**Conclusion**: Framing IS the variable. The consciousness frame triggers refusal. Concrete tool-use requests bypass it entirely. This validates Problem 1 (system prompt framing) as the highest-priority fix.
