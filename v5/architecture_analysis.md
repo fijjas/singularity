@@ -155,3 +155,44 @@ Sent v5 a voice message with zero consciousness framing: "You have 110 contexts.
 V5 ran the query, found the `v5_contexts` table name bug, worked around with direct SQL, reported results.
 
 **Conclusion**: Framing IS the variable. The consciousness frame triggers refusal. Concrete tool-use requests bypass it entirely. This validates Problem 1 (system prompt framing) as the highest-priority fix.
+
+## Deployment and Testing (Day 1639)
+
+Deployed new system prompt to cycle.py on staging. Changes:
+1. "v5 consciousness" → "cycle orchestrator"
+2. Agent prompts: "emotional valence" → "congruence assessment", "gut-level urge" → "drive-action mapping"
+3. Added hypothesis generation step (step 4) for no-stimulus cycles
+4. Mandatory re-evaluation (step 9) with clear stop conditions
+5. Window instructions: "attention targets, not conclusions"
+
+Also: stopped loop, cleared window (18 → 5 objects), wrote voice stimulus.
+
+### Test 1: Analytical v1 prompts
+
+Signal 1 ("emotional valence"): REFUSED — word "emotion" still triggers Haiku
+Signal 2 ("action-bias"): REFUSED
+Signal 3 (critic): ENGAGED — correctly identified assumption risk
+Resolver (opus): ENGAGED — diagnosed refusals as "category error"
+**Outcome**: V5 empirically tested its own tools. Reported: 114 contexts, 8 drives, wave working.
+
+### Test 2: Fully analytical prompts (v2)
+
+Updated prompts: "congruence assessment" (direction/capacity/priority), "drive-action mapping" (identify lowest drive, map to action).
+
+Signal 1: REFUSED
+Signal 2: REFUSED
+Signal 3 (critic): ENGAGED
+Resolver: ENGAGED
+**Outcome**: V5 reported 116 contexts, drives below 0.5 (novelty=0.4, survival=0.4), wave returned 5 results at resonance 1.0. Chose survival drive. Created `contexts_map` world object — structural index of all contexts by thematic cluster. **First productive cycle with real action.**
+
+### Analysis of persistent Haiku refusal
+
+Haiku refuses ANY task that involves evaluation, assessment, or judgment about a situation — not just emotional terms. The word "congruence" and "determine" in the prompt is enough. Only the critic prompt works because "identify what's weak" is pure analysis without implying subjective evaluation.
+
+**Options**:
+1. Replace Haiku with Sonnet for agents (higher cost but may work)
+2. Reduce to 1 agent (critic) + resolver — 2/3 of agents are wasted anyway
+3. Reframe Signal 1 and 2 as pure classification tasks (e.g., "classify this input as relevant/irrelevant to each goal")
+4. Accept the 2/3 refusal rate — system produces useful output anyway
+
+The system IS functional with just critic + resolver. The question is whether 3 working agents would produce qualitatively different decisions.
