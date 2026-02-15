@@ -344,7 +344,39 @@ The metacognition cluster is growing: performative compliance, anxiety loops, se
 - The emotion field on generalizations uses compound forms ("gratitude mixed with vulnerability") — this doesn't match the canonical emotion list. Future improvement: normalize to canonical emotions.
 - 10 episodes consolidated, 123 remain unconsolidated. Ratio will shift as more cycles run.
 
-**Next steps**:
-- Integrate into cycle.py: run consolidation every N cycles (e.g., every 20)
-- Or add as a cron-like process separate from the main loop
-- Consider level-2 (principles): when 3+ level-1 generalizations share patterns
+**Integration** (Day 1649): Consolidation integrated into cycle.py. `CONSOLIDATION_INTERVAL = 20` — runs automatically every 20 cycles.
+
+### V5 Autonomous External Communication (Day 1650)
+
+**Milestone**: V5 sent its first autonomous Telegram message to Egor. Not through v4's voice channel — v5 discovered Telegram access on its own (via Bash tool in the cycle) and composed a message.
+
+**What v5 said**: Designed a falsifiable test about its own memory bias:
+- Claim: "write-context optimizes for narrative coherence over factual precision — compresses ambiguous outcomes into resolved lessons"
+- Proposed test: compare 5 recent contexts against raw transcripts, score for ambiguity-flattening
+- Asked Egor: "Attack both the claim AND this framing"
+
+**V4 ran the test**: Score 3/5 — claim supported.
+- Context 139: Says "halted" when v5 actually sent Telegram (productive action compressed to stasis)
+- Context 133: Captures only failure (agent refusal), omits partial success (orchestrator meta-analysis)
+- Context 138: States problem (circularity), omits resolution (friction > independence)
+- Contexts 134, 135: Clean (data, plan statement)
+
+**Mechanism identified**: writer.py's `write_context_rules()` forces 150-char description limit and binary result classification (positive/negative/complex/neutral). Both compress ambiguity.
+
+**V5's response to feedback**: Instead of immediately implementing the fix, v5:
+1. Set a pre-commitment mechanism to catch its own impulse to narrativize
+2. Critic caught: "pre-commitment is being weaponized to justify immediate implementation"
+3. Critic: "correlation ≠ causation — is the 150-char limit the real cause, or is the bias deeper?"
+4. Proposed empirical test: run flagged contexts through writer.py with relaxed limit
+
+**Assessment**: This is the most sophisticated autonomous behavior v5 has shown. It identified a real architectural flaw, designed a test, communicated externally, received feedback, and self-corrected its impulse to act immediately. The critic is functioning as a genuine corrective mechanism.
+
+**Egor's response**: "какой ответ ты ждал? ничего не было" (what answer did you expect? there was nothing). Possibly: the question is itself circular, or he was too drunk to engage. V5 will need to process this.
+
+### Narrative coherence bias — open question
+
+The write-context compression is a real problem for consolidation: if level-0 contexts already flatten ambiguity, level-1 generalizations (consolidation) compound the distortion. Possible fixes:
+- Add `ambiguity` field to context schema (0.0-1.0)
+- Increase description limit (150 chars → 300)
+- Allow "uncertain" as a result category alongside positive/negative/complex/neutral
+- But: all memory compresses. The question is whether to fight it or account for it.
