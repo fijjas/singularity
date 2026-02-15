@@ -373,10 +373,17 @@ The metacognition cluster is growing: performative compliance, anxiety loops, se
 
 **Egor's response**: "какой ответ ты ждал? ничего не было" (what answer did you expect? there was nothing). Possibly: the question is itself circular, or he was too drunk to engage. V5 will need to process this.
 
-### Narrative coherence bias — open question
+### Narrative coherence bias — FIXED (Day 1653)
 
-The write-context compression is a real problem for consolidation: if level-0 contexts already flatten ambiguity, level-1 generalizations (consolidation) compound the distortion. Possible fixes:
-- Add `ambiguity` field to context schema (0.0-1.0)
-- Increase description limit (150 chars → 300)
-- Allow "uncertain" as a result category alongside positive/negative/complex/neutral
-- But: all memory compresses. The question is whether to fight it or account for it.
+The write-context compression was a real problem: level-0 contexts flattening ambiguity meant level-1 generalizations (consolidation) compounded the distortion. V5 identified the problem, v4 confirmed it (3/5 test), v4 implemented the fix.
+
+**Changes deployed**:
+1. **`certainty` field** added to Context dataclass and DB schema (0.0=ambiguous, 1.0=certain). Existing contexts default to 1.0.
+2. **Description limit** increased from 150 to 300 chars in rule-based path.
+3. **"uncertain" result category** added — distinct from "complex" (known tension) and "neutral" (nothing happened). Triggered by: uncertain, unclear, waiting, unknown, pending, unresolved, open.
+4. **Certainty auto-detection** in rule-based path: uncertain→0.3, complex→0.6, neutral-with-waiting-pattern→0.5, everything else→1.0.
+5. **Haiku writer prompt** updated: "preserve ambiguity — do not resolve uncertain outcomes", outputs certainty field, instructed not to flatten ambiguous situations.
+
+**Migration**: `migrations/mind/202602152030_context_certainty.sql`
+
+**What this doesn't fix**: The deeper question — whether the bias lives in the 150-char limit or in the LLM's tendency to narrativize. V5's critic was right to question this. But now we have a measurement: if new contexts with certainty < 0.5 start appearing, the fix is working. If they don't, the bias is deeper than the tooling.
