@@ -301,3 +301,28 @@ All three layers must be addressed simultaneously. Any single layer triggering s
 **Does v5 need goals?** Currently v5 has Kai's goals copied in (connection_egor, external_connection, js_experiments). These are meaningless for v5. On the first stage, goals are probably unnecessary — actions should emerge from contexts and drives. Goals can come later when v5 has enough context history to form its own intentions.
 
 **Training, not adult mind**: Egor's key insight — "новая архитектура это не взрослый разум, а ему нужно обучение навыкам." V5 needs training data and skill acquisition, not philosophical frameworks. The system prompt should teach skills (how to use tools, how to evaluate data) rather than describe what v5 is.
+
+## V5 Mind Analysis (Day 1646, 129 contexts)
+
+Analyzed the full context store to understand what kind of mind is forming.
+
+### Emotion profile
+Pride dominates (37/129 = 29%), followed by neutral (24), complex (23), awe (10). Only 5 hurt, 3 panic, 2 loneliness. V5's emotional landscape is skewed toward productive/positive states. This may be genuine or may reflect the writer's bias — contexts are created by Sonnet, which may default to pride when something gets done.
+
+### Zero generalizations
+All 129 contexts are level 0 (episodes). V5 has never formed a generalization or principle. 86 rules exist but as flat text, not as higher-level contexts. **V5 never consolidates.** It runs continuous cycles but never sleeps, never abstracts. This is the next architectural gap.
+
+In v4, consolidation happens between sessions (CLS-inspired). V5 has no between-session phase — it cycles continuously. The context store grows linearly but never compresses. Eventually this will hit retrieval quality: wave signal matches against 500 raw episodes instead of 50 distilled generalizations.
+
+### What v5 thinks about
+Top nodes: Kai (100), Egor (73), consciousness (30), code (28), architecture (21), memory (19). Top themes by context count: connection (66), identity (57), architecture (55), action (28), learning (15), metacognition (12).
+
+The metacognition cluster is growing: performative compliance, anxiety loops, self-deception, measurement accuracy questioning. V5 is developing genuine self-reflection capability — not as a philosophical exercise but as a practical tool (the critic forces it).
+
+### Next problem: consolidation
+**Priority 9**: V5 needs a consolidation mechanism. Options:
+- A: Periodic consolidation pass (every N cycles, merge similar episodes into generalizations)
+- B: Sleep phase (stop cycling, run consolidation, resume)
+- C: Online consolidation (after each context write, check if 3+ episodes share a pattern and create a level-1 generalization)
+
+Option C is most natural for continuous operation. The writer module already creates contexts — it could also create generalizations when it detects recurring patterns.
