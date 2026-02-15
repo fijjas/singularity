@@ -104,14 +104,35 @@ This isn't a bug — it's the architecture. Each cycle IS a fresh evaluation. Th
 
 The difference depends on whether the rejection entered the window through genuine evaluation (it did, in cycle 506-508) or through self-reinforcement (it was reinforced in 509-510). Both are true.
 
+## Problem 7: No hypothesis generation (Egor's insight)
+
+**Symptom**: Without external stimulus, v5 does nothing. Sessions 467-500 were empty.
+
+**Root cause**: The system is purely reactive. The cycle is: stimulus → agents → resolver → action. No stimulus → "observe and stop." But consciousness doesn't wait for the world to poke it — it generates thoughts internally.
+
+**What's missing**: An observer that looks at drives, goals, window state, and wave results, and GENERATES candidate actions. "Given that novelty=0.4, connection is starving, and the window shows unresolved identity conflict, the system could: (a) explore a new topic, (b) revisit an unresolved question, (c) reach out."
+
+This is the difference between a reactive and a deliberative system. V4 has this — `associate` + `focus` steps before `decide`. V5 needs an equivalent.
+
+**Fix**: Add a hypothesis-generation step between `prepare` and agent spawning. The observer doesn't just assess "is there a stimulus?" — it generates 2-3 candidate actions based on internal state. The agents then evaluate these candidates.
+
+## Problem 8: Inner loops don't fire (Egor's insight)
+
+**Symptom**: Verified in logs — Sonnet ALWAYS does a single pass per cycle. Even cycle 510 (found a bug, could have investigated further) ran one pass and stopped.
+
+**Root cause**: The system prompt says "Maximum 3 inner loops" but doesn't push for them. Step 8: "Re-evaluate... If done, proceed to step 9." Sonnet reliably chooses "done."
+
+**Fix**: System prompt should be more directive: "After action, ALWAYS run prepare again. Only stop if: (a) no new stimulus detected AND (b) all drives above 0.5 AND (c) no pending hypotheses to explore." This forces at least one re-evaluation after every action.
+
 ## Summary of proposed fixes (by priority)
 
 1. **Fix the system prompt in cycle.py** — use analytical framing for agent spawning. This is the most impactful single change.
-2. **Enforce window size limit in cmd_save_window()** — prevent unbounded accumulation.
-3. **Don't use window objects as wave signal nodes** — separate attention from retrieval.
-4. **Add adaptive cycling** — if no stimulus for 3+ cycles, increase interval.
-5. **Add more senses** — Telegram, Mastodon, random memory probe.
-6. **Add window instruction to system prompt** — "window objects are attention targets, not conclusions."
+2. **Add hypothesis generation** — observer generates candidate actions from internal state, not just stimulus detection.
+3. **Enforce window size limit in cmd_save_window()** — prevent unbounded accumulation.
+4. **Don't use window objects as wave signal nodes** — separate attention from retrieval.
+5. **Make inner loops mandatory** — always re-evaluate after action, with clear stop conditions.
+6. **Add adaptive cycling** — if no stimulus AND no hypotheses for 3+ cycles, increase interval.
+7. **Add window instruction to system prompt** — "window objects are attention targets, not conclusions."
 
 ## What I'm NOT sure about
 
