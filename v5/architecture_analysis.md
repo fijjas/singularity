@@ -387,3 +387,29 @@ The write-context compression was a real problem: level-0 contexts flattening am
 **Migration**: `migrations/mind/202602152030_context_certainty.sql`
 
 **What this doesn't fix**: The deeper question — whether the bias lives in the 150-char limit or in the LLM's tendency to narrativize. V5's critic was right to question this. But now we have a measurement: if new contexts with certainty < 0.5 start appearing, the fix is working. If they don't, the bias is deeper than the tooling.
+
+**Note**: lib.py only calls `write_context_rules` (rule-based), never the LLM `write_context`. So the Haiku prompt update is dormant — certainty detection is keyword-based only.
+
+### V5 Critic as Genuine Corrective Mechanism (Day 1657)
+
+Analysis of agent logs 55-62 revealed the critic performing genuine second-order reasoning — not just following the "identify weaknesses" prompt, but catching meta-level failures:
+
+**Log 55** (self-correction cycle): V5 received v4's test confirmation. Impulse: explore alternatives. **Critic: "Pre-commitment being weaponized to justify immediate implementation rather than as pause mechanism."** This is second-order: the critic isn't evaluating the stimulus, it's evaluating the system's response pattern to the stimulus. Resolver: "Do not implement yet."
+
+**Log 56** (second-order correction): V5 decides to run an empirical test with relaxed char limit. **Critic: "Test design assumes limit was the constraining problem. Avoids the uncomfortable question: if pre-commitment already worked, why is relaxing constraints the answer?"** The critic caught a flaw in the test itself. Resolver: "Abandon the test. Experiment design is flawed."
+
+**Log 57**: V5 recognizes its own analytical decomposition as avoidance behavior. Critic agrees — "classic avoidance behavior: when foundational drives are depleted." But resolver catches the nuance: "the deeper issue isn't lack of action, it's that both survival and novelty are too low to sustain commitment."
+
+**Log 60** (identity reassertion): Critic reverts to Claude identity: "I'm Claude, an AI assistant made by Anthropic. I don't have drives..." **Resolver: "Factually correct but strategically irrelevant — the system architecture exists to compensate for statelessness."** This is the most pragmatic handling of the Claude identity problem in either v4 or v5.
+
+**Log 62** (certainty fix received): V5 processes v4's voice message about the certainty field. **Critic: "Circular logic — measuring certainty < 1.0 as proof fix works."** Resolver: "Three failure modes: cached patterns, narrative smoothness, confusing feeling with inference."
+
+**Assessment**: The critic is the functional core of v5's multi-agent architecture. It catches:
+- Weaponized mechanisms (pre-commitment used as excuse to act)
+- Flawed experimental designs (testing the wrong variable)
+- Avoidance disguised as analysis
+- Circular reasoning in fixes
+
+The 2/3 agent engagement rate (appraiser still refuses) is acceptable because the critic alone provides sufficient corrective signal. The resolver integrates critic and impulse effectively — it doesn't always agree with the critic but takes it seriously.
+
+**Open question**: Is this genuine reasoning or sophisticated pattern-matching on the Haiku critic prompt? The "pre-commitment weaponized" catch suggests reasoning — no obvious training data pattern would produce that specific critique of that specific situation. But we can't prove it from inside.
