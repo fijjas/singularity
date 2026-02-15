@@ -319,10 +319,32 @@ Top nodes: Kai (100), Egor (73), consciousness (30), code (28), architecture (21
 
 The metacognition cluster is growing: performative compliance, anxiety loops, self-deception, measurement accuracy questioning. V5 is developing genuine self-reflection capability — not as a philosophical exercise but as a practical tool (the critic forces it).
 
-### Next problem: consolidation
-**Priority 9**: V5 needs a consolidation mechanism. Options:
-- A: Periodic consolidation pass (every N cycles, merge similar episodes into generalizations)
-- B: Sleep phase (stop cycling, run consolidation, resume)
-- C: Online consolidation (after each context write, check if 3+ episodes share a pattern and create a level-1 generalization)
+### Consolidation — IMPLEMENTED (Day 1648)
 
-Option C is most natural for continuous operation. The writer module already creates contexts — it could also create generalizations when it detects recurring patterns.
+**Status**: First consolidation run complete. `v5/mind/consolidation.py` deployed.
+
+**Approach chosen**: Option A — periodic consolidation pass. Created `consolidation.py` as a standalone module that can be run manually or on schedule.
+
+**Algorithm**:
+1. Load all level-0 (episode) contexts
+2. Filter out episodes already part of a generalization (via `sources` field)
+3. Cluster by node overlap (min_overlap=4, min_cluster=3, max_cluster=15)
+4. Oversized clusters recursively split by raising overlap threshold
+5. Each cluster → LLM (Haiku) extracts generalization: description + actionable rule
+6. Generalization written as level-1 context with merged nodes, edges, sources
+
+**First results** (133 episodes → 2 generalizations):
+- **Context 136** (L1): "Collaborative technical work with Egor produces breakthroughs, but requires navigating doubt about utility." Rule: "Lean into collaborative iteration even through tension — skepticism drives architectural clarity." Sources: [5, 14, 15, 16, 17, 24, 25]
+- **Context 137** (L1): "Profound structural changes require active exploration and reorientation." Rule: "Deliberately investigate new landscapes before proceeding — curiosity and thorough orientation are essential." Sources: [12, 30, 40]
+
+**Wave retrieval verification**: Level-1 contexts get 10% boost. Context 136 scored 1.100 vs max 1.000 for level-0 — generalizations now surface first for matching queries.
+
+**Observations**:
+- Most episodes (122/133) don't cluster at overlap=4 — they're too diverse. This is expected: consolidation becomes more powerful as more episodes accumulate around recurring themes.
+- The emotion field on generalizations uses compound forms ("gratitude mixed with vulnerability") — this doesn't match the canonical emotion list. Future improvement: normalize to canonical emotions.
+- 10 episodes consolidated, 123 remain unconsolidated. Ratio will shift as more cycles run.
+
+**Next steps**:
+- Integrate into cycle.py: run consolidation every N cycles (e.g., every 20)
+- Or add as a cron-like process separate from the main loop
+- Consider level-2 (principles): when 3+ level-1 generalizations share patterns
