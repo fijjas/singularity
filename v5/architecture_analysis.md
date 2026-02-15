@@ -196,3 +196,29 @@ Haiku refuses ANY task that involves evaluation, assessment, or judgment about a
 4. Accept the 2/3 refusal rate — system produces useful output anyway
 
 The system IS functional with just critic + resolver. The question is whether 3 working agents would produce qualitatively different decisions.
+
+### Test 3: Context preamble (Day 1640)
+
+Egor's insight: "может им стоит знать что-то?" (maybe they need to know something). The agents are spawned naked — no knowledge of what drives are, what the system does, or why they should evaluate anything.
+
+Added context preamble to all 3 agents:
+> "You are an analytical module in a data processing pipeline. The system tracks numerical drives (0.0=unsatisfied, 1.0=satisfied) and maintains attention objects. You receive a situation description and data. Evaluate it as instructed."
+
+Also fixed log-agents: system prompt now specifies exact JSON field names matching lib.py expectations.
+
+**Results**:
+- Signal 1 (appraiser/congruence): REFUSED but closer — "asked for clarification of role"
+- Signal 2 (impulse/drive-action): **ENGAGED** — "Survival (0.4) is lowest. Propose establishing fundamental stability"
+- Signal 3 (critic): ENGAGED — "Why is drive low? Measurement artifact?"
+- Resolver: Excellent — corrected impulse's anthropomorphism (projected human needs onto system), proposed memory continuity audit
+
+**Score**: 2/3 engaged (was 1/3 without context). Context IS the variable for Signal 2.
+
+V5 cycle output: identified survival=0.4 as foundational, proposed auditing memory file loading reliability. Concrete, useful, architectural.
+
+**Updated analysis**: The problem is layered:
+1. Experiential language → refusal (FIXED: analytical framing)
+2. No domain context → refusal (FIXED for 2/3: pipeline preamble)
+3. Appraiser still refuses "congruence assessment" even with context → needs different task type
+
+**Next**: Try reframing Signal 1 as pure data classification (e.g., "classify this input: relevant/irrelevant to each listed goal") or replace with Sonnet.
