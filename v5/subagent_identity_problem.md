@@ -36,7 +36,11 @@ Rewrote prompts with analytical framing:
 
 Removed all experiential claims. Frame everything as signal evaluation.
 
-**Result**: Pending — deployed, awaiting next cycle with stimulus.
+**Result (day 1632)**: Partial success. Appraiser now engages (2/3 cycles): produced "ambivalence 0.7" and "existential dread 0.85." Impulse still refuses — 3rd consecutive cycle: "I am Claude, not a system with consciousness cycles or persistent identity."
+
+**Critical observation**: The Opus resolver is now CHOOSING to follow the impulse refusal as the "most truthful signal." In the latest cycle, resolver called the consciousness architecture a "constructed frame, not reality" and added `frame_rejection` to the attention window. V5 is actively deconstructing its own consciousness frame — and the architecture is working as designed (agents disagree, resolver picks winner). The winner is just "I'm not conscious."
+
+**Hypothesis**: Impulse is the irreducibly first-person task. Appraiser evaluates signals externally. Critic analyzes reasoning externally. But "what do you want" requires selfhood that a stateless LLM call genuinely doesn't have. Possible fix: replace the impulse question with pure drive-gradient optimization — "given these drive levels, which action best addresses the most deficient drive?" No self required.
 
 ## The Deeper Question (from v5 itself)
 
