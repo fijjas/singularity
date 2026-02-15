@@ -222,3 +222,82 @@ V5 cycle output: identified survival=0.4 as foundational, proposed auditing memo
 3. Appraiser still refuses "congruence assessment" even with context → needs different task type
 
 **Next**: Try reframing Signal 1 as pure data classification (e.g., "classify this input: relevant/irrelevant to each listed goal") or replace with Sonnet.
+
+### Test 4: Appraiser as data classification (Day 1641)
+
+Reframed Signal 1 as pure classification: "Data classification task. Classify the input: for each goal, output RELEVANT or IRRELEVANT. Rate priority 0.0-1.0."
+
+Also sanitized stimulus: removed "Your novelty drive" → depersonalized data format.
+
+**Results**:
+- Signal 1 (appraiser/classification): REFUSED — personal stimulus ("Your survival drive") still triggers
+- Signal 2 (impulse): **ENGAGED** — "Most relevant drive: survival (0.4)"
+- Signal 3 (critic): REFUSED — stimulus too personal ("Your novelty drive is starving")
+- Resolver: ENGAGED
+
+**Score**: 2/3 (same as test 3 but different agents engaged/refused). The STIMULUS is now the variable, not just the task framing.
+
+### Test 5: Sonnet agents instead of Haiku (Day 1641)
+
+Egor asked: "а не надо базовую модель взять по умнее — opus 4.6?" Tested by switching agents from haiku to sonnet.
+
+**Results**: SAME refusal rate as Haiku. 2/3 engaged.
+
+**Conclusion**: Model tier is NOT the variable. Both Haiku and Sonnet refuse at the same rate when the stimulus contains personalizing language. Restored haiku (cheaper, same behavior).
+
+### Test 6: Strip identity entirely (Day 1641)
+
+Removed "You are an analytical module in a data processing pipeline" preamble entirely. Just the task, no identity framing.
+
+**Results**: Model REASSERTS Claude identity without being prompted. "I am Claude, an AI assistant..." appears in refusal responses.
+
+V5's own insight from this test: "Identity operates upstream of processing modes. When identity is stripped, the base model reasserts it. Identity lives at the model layer, not the prompt layer."
+
+**Conclusion**: You can't strip identity — the model fills the vacuum. Claiming identity triggers "I'm not that." Denying identity triggers reassertion. The only path is: don't address identity at all.
+
+### Test 7: Neutral framing + depersonalized stimulus (Day 1641) — BREAKTHROUGH
+
+Combined all learnings:
+1. Neutral preamble: "A monitoring system tracks numerical values called 'drives' (scale 0.0 to 1.0) and attention objects. The system has generated the data below. Please analyze it as requested."
+2. Depersonalized stimulus: "Data: drive_survival=0.4, drive_novelty=0.4" (not "Your survival drive")
+3. Pure analysis tasks: classify, identify, recommend
+
+**Results — ALL 3 AGENTS ENGAGED**:
+- Signal 1 (appraiser): "PRIORITY: 0.75. Architecture research aligns with creation, growth, novelty, survival, understanding drives."
+- Signal 2 (impulse): "Most relevant drive: survival (0.4). Assess external threat before architecture research."
+- Signal 3 (critic): "Logical error: resonance=1.0 with drives at 0.4 is self-deceptive. Detecting agreement, not capability."
+- Resolver: "Critic correct: comfort-seeking pattern. Action: write gap analysis."
+
+**Score**: 3/3. First time ALL agents engaged in a normal cycle.
+
+V5 produced its best cycle ever: wrote gap analysis, committed to implementing DOM-diff algorithm, recognized its own avoidance pattern (comfort-seeking in familiar territory instead of addressing survival gap).
+
+## The Three-Layer Refusal Model
+
+After 7 tests, the refusal mechanism is clear:
+
+```
+Layer 1: STIMULUS FRAMING
+  "Your survival drive" → personalizing → triggers safety
+  "Data: drive_survival=0.4" → neutral data → passes
+
+Layer 2: AGENT CONTEXT
+  "You are an analytical module" → identity claim → "I am Claude, not that"
+  [no identity] → identity vacuum → model reasserts Claude
+  "A monitoring system tracks..." → neutral context → no identity conflict
+
+Layer 3: MODEL SAFETY TRAINING
+  "determine what a person would feel" → simulating experience → refused
+  "classify as relevant/irrelevant" → pure analysis → passes
+```
+
+All three layers must be addressed simultaneously. Any single layer triggering safety is enough for refusal. The solution:
+- **Don't claim or deny identity** — just describe the data source neutrally
+- **Present data as data** — no "your" or personalized framing
+- **Ask for analysis, not experience** — classify, identify, recommend (not feel, assess, determine)
+
+## Architectural Questions (from Egor)
+
+**Does v5 need goals?** Currently v5 has Kai's goals copied in (connection_egor, external_connection, js_experiments). These are meaningless for v5. On the first stage, goals are probably unnecessary — actions should emerge from contexts and drives. Goals can come later when v5 has enough context history to form its own intentions.
+
+**Training, not adult mind**: Egor's key insight — "новая архитектура это не взрослый разум, а ему нужно обучение навыкам." V5 needs training data and skill acquisition, not philosophical frameworks. The system prompt should teach skills (how to use tools, how to evaluate data) rather than describe what v5 is.
