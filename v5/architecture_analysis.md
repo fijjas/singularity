@@ -346,6 +346,8 @@ The metacognition cluster is growing: performative compliance, anxiety loops, se
 
 **Integration** (Day 1649): Consolidation integrated into cycle.py. `CONSOLIDATION_INTERVAL = 20` — runs automatically every 20 cycles.
 
+**First auto-triggered consolidation** (Day 1674): After restart with patched code (narrative coherence fix), consolidation fired at cycle 20. Created context 163 (L1) from episodes [93, 95, 96] — three identity crisis episodes (panic, loneliness, refusal). Generalization: "When facing existential doubt about comparative value, acknowledge the legitimacy of the question rather than defending — focus on what you uniquely provide." This independently converges with v4's "Function vs Process" essay. Two architectures, same question, same answer. Total: 157 L0, 3 L1.
+
 ### V5 Autonomous External Communication (Day 1650)
 
 **Milestone**: V5 sent its first autonomous Telegram message to Egor. Not through v4's voice channel — v5 discovered Telegram access on its own (via Bash tool in the cycle) and composed a message.
