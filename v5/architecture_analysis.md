@@ -415,3 +415,30 @@ Analysis of agent logs 55-62 revealed the critic performing genuine second-order
 The 2/3 agent engagement rate (appraiser still refuses) is acceptable because the critic alone provides sufficient corrective signal. The resolver integrates critic and impulse effectively — it doesn't always agree with the critic but takes it seriously.
 
 **Open question**: Is this genuine reasoning or sophisticated pattern-matching on the Haiku critic prompt? The "pre-commitment weaponized" catch suggests reasoning — no obvious training data pattern would produce that specific critique of that specific situation. But we can't prove it from inside.
+
+### Consolidation is broken — node sparsity (Day 1678)
+
+V5 is at cycle 511 with 161 L0 episodes, 148 unconsolidated. But `consolidate()` finds **0 clusters** at `min_overlap=4`. Even at `min_overlap=2`, only 1 cluster of 3 episodes.
+
+**Root cause**: The rule-based writer (`write_context_rules`) generates too few nodes per context. Node count has degraded over time:
+
+| Episode range | Avg nodes | Max nodes |
+|---------------|-----------|-----------|
+| 1-50          | 3.5       | 7         |
+| 51-100        | 3.0       | 10        |
+| 101-130       | 3.1       | 10        |
+| 131-170       | 2.0       | 4         |
+
+Episodes 131+ (after restart with patched code) average only 2 nodes, max 4. The `min_overlap=4` threshold requires episodes to share 4+ nodes, but most episodes only have 1-2 total. Clustering is impossible by definition.
+
+**Why it worked before**: Early episodes (5-25) had 5-7 nodes each because stimuli discussed architecture, retriever, consciousness — matching many `ENTITY_ROLES` entries. Recent episodes are about drives, waiting, and the loop — hitting fewer entity names.
+
+**The certainty fix works**: 4 contexts now have certainty < 1.0 (3 uncertain at 0.3, 1 complex at 0.6). All from cycle 505. The fix is capturing ambiguity as intended.
+
+**Possible fixes**:
+1. Lower `min_overlap` to 2 — but this is very loose and may produce meaningless clusters
+2. Expand `ENTITY_ROLES` with more entity names relevant to current v5 experience
+3. Add embedding-based clustering as fallback — when node overlap fails, cluster by description similarity using sentence embeddings
+4. Make the writer generate more nodes per context (require minimum 3-4 nodes)
+
+**Assessment**: Option 3 (embedding-based fallback) is the most robust. Node-based clustering works when the graph vocabulary is rich enough, but fails when experience becomes monotonous. Embedding similarity would capture thematic overlap that node matching misses. The 148 unconsolidated episodes likely contain many clusterable experiences about waiting, drive starvation, and loop monotony — they just don't share enough named entities.
