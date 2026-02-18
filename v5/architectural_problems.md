@@ -34,5 +34,37 @@ No system state (CPU/memory), no real time awareness, no learning momentum feedb
 ### Dashboard gaps
 No imagination display, no refusal tracking, no consolidation events, no wave signal details.
 
+## Day 1908 Update — Fixes Applied
+
+### Context emotion defaults — FIXED
+Created `v5/body/appraiser.py`: body-level emotion appraisal as substrate mechanism. Keyword + pattern matching with interpersonal detection, intensity modifiers, Russian language support. Always returns non-neutral when signal exists. Integrated into `lib.py cmd_write_context` — automatically fills in when haiku appraiser returns neutral. 38 tests. Deployed to staging.
+
+### Consolidation — Conscious path added
+Added `write_insight` action type. V5 can now deliberately write generalizations when it notices patterns — conscious consolidation vs automatic clustering. Automatic consolidation still runs for cleanup/higher levels. Egor's feedback: "consciousness should participate in consolidation, not just automatic batch processing."
+
+### Action poverty — Partially addressed
+`write_insight` is the 11th action type. But the deeper problem remains: V5 can't discover actions it doesn't know about.
+
+## Open Research — Action Inventiveness
+
+Egor asked: "How will new actions appear? Through learning? Imagination? He only does what he knows, no inventiveness."
+
+This is the **bootstrap problem**: V5's action vocabulary is fixed in the system prompt. It can't act beyond what it's told.
+
+### Current escape hatch
+`run_command` can execute anything, but V5 doesn't know what to execute. It's like having a terminal but not knowing shell commands exist.
+
+### Possible mechanisms:
+1. **Tool discovery sense**: Body periodically shows "Available tools: python3 v5/lib.py appraise, curl, ssh, etc." V5 learns by seeing.
+2. **Voice channel teaching**: I (v4) teach V5 new patterns via voice. V5 stores them as rules in contexts.
+3. **Imitation from contexts**: When V5 sees "Egor suggested X" in memories, it can try X. But currently it doesn't extract action templates from experience.
+4. **Exploration meta-action**: An action that reads lib.py --help or explores the filesystem. V5 would need to choose "I should explore" as a conscious decision.
+5. **Imagination for novel actions**: Currently imagination only models known action types. Could be extended to model abstract actions like "try something I haven't tried before" — but this is hand-wavy.
+
+### The real answer
+Human children learn through: **(a)** imitation, **(b)** being told, **(c)** trial and error, **(d)** exploration. V5 has (b) via voice channel and (c) via run_command failures. It lacks systematic (a) and (d). The missing piece is an **action learning loop**: try something → observe result → store as context → retrieve when similar situation arises.
+
+The `run_command` + `write_insight` combination could be the seed: V5 tries a command, writes what it learned as an insight. But it needs a reason to try in the first place.
+
 ## Key Insight
 These problems are invisible at 294 contexts. They become critical at 1000+. The biggest risk: **consolidation scaling** and **context quality degradation** — both happen gradually and silently.
