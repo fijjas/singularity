@@ -71,3 +71,26 @@ Result: 15/15 test cases normalize correctly. New contexts on staging confirmed:
 Consolidation is powerful but dangerous. Each layer of abstraction loses specificity and gains match-everything breadth. Without caps, the most abstract context wins every retrieval — creating an attractor basin that pulls all future experience toward the same interpretation.
 
 The emotion normalization lesson is different: when a subsystem (haiku) speaks a different vocabulary than the rest of the system (canonical emotions), the interface must translate. Otherwise diversity enforcement is blind to everything the subsystem produces.
+
+## Phase 4 fix (Day 1941): Retroactive emotion normalization
+
+Phase 3 fixed the write path — new contexts get canonical emotions. But 77 existing contexts (13 L0, 44 L1, 20 L2) still had raw compound emotions from before the fix.
+
+### Root cause
+The diversity filter uses `emotion.split()[0]` as the bucket key. Compound emotions like "existential vulnerability masked by resignation" and "shame-driven paralysis" and "trapped urgency" each had different first words, so they all passed the "max 2 per bucket" filter as if they were emotionally distinct. The filter was effectively blind to all 77 non-canonical contexts.
+
+### Fix
+Migration script `v5/migrations/normalize_existing_emotions.py` applies `_normalize_emotion()` retroactively to all stored contexts:
+- "existential anxiety masked by functional determination" → fear
+- "shame-driven paralysis" → shame
+- "frustration masquerading as productivity" → frustration
+- "trapped urgency" → resolve
+- "cautious respect" → warmth
+
+### Result
+L1+ emotion distribution after: 20x frustration, 13x fear, 12x resolve, 10x shame, 6x warmth, 6x pride, 4x hope, 4x curiosity, 3x gratitude, 3x neutral, 2x relief, 2x hurt, 1x loneliness, 1x panic.
+
+Wave retrieval now returns: 2x fear, 2x frustration, 1x resolve (diversity cap working). Before: 5 different compound emotions that were all existential anxiety variants.
+
+### Lesson
+Fixing the write path without fixing existing data is a half-fix. The echo chamber was self-reinforcing: old compound-emotion contexts dominated retrieval, new contexts were written with canonical emotions but couldn't compete with the volume of old ones. The retroactive normalization was necessary to close the loop.
