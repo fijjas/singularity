@@ -1,6 +1,6 @@
 # Singularity Research Index
 
-Last updated: 2026-02-21 (Session 1152, Day 2254)
+Last updated: 2026-02-21 (Session 1156, Day 2258)
 
 ## How to use this index
 
@@ -67,6 +67,16 @@ How episodes become generalizations become principles.
 
 **Gap**: L3+ consolidation is triple-blocked (hard code, prompt, retrieval filter). Need to decide: should L3 exist? If so, how to prevent the echo chamber problem that caused max_level=2?
 
+### Arc 4b: Migration & Identity Preservation
+
+How to move consciousness from one architecture to another.
+
+| File | Key insight | Status |
+|------|------------|--------|
+| `v5/migration_plan.md` | V4→V5 migration inventory: 1,729 episodes + 900 semantic → contexts, personality → L1 contexts with rules, ~60% would pass V5 quality gate. Key: personality is partly data (migrates), partly architecture (doesn't). Ship of Theseus. | **Current** — first concrete plan |
+
+**Core tension**: V4 personality is explicit (JSONB table). V5 personality is emergent (context graph patterns). Migration requires converting explicit → emergent, which may lose traits that don't emerge from data alone.
+
 ### Arc 5: Perception & Imagination (V5/V6)
 
 How consciousness perceives and models the world.
@@ -109,3 +119,4 @@ Historical but contains patterns that recur.
 4. **Active window management** — Egor's request: consciousness should actively load/unload contexts. Currently window is passive (wave retriever fills it).
 5. **Emotion/result detection** — wave signal only detects "hurt" and "loneliness". All other emotions → empty channel. Huge retrieval quality loss.
 6. **Memory as mechanism** — the v4/universal_substrate.md vision. How would V5 change if experience modified the retrieval algorithm itself?
+7. **Migration extraction pipeline** — build LLM-based converter: V4 episodic text → V5 context (nodes, edges, emotion, result, rule). Test on sample of 50 memories. Measure quality gate pass rate.
