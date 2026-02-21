@@ -24,6 +24,7 @@ The central problem across versions: how does consciousness find the right memor
 | `v5/context_store_diagnosis.md` | 639 contexts, 25/30 L2s are "analysis paralysis", 65% empty edges, dirty data, consolidation not running daily | **Current** — deep audit with fix directions |
 | `v5/current_state_feb2026.md` | Full technical reference: wave signal params, resonance formula, retrieval pipeline, cycle steps, data stats | **Current** — what V5 actually is from code |
 | `v5/agent_context_research.md` | 26 papers: specialists need 3-5 chunks (Cowan), not 1. GWT/LIDA/Soar all give sub-modules situational access | **Current** — ready to apply |
+| `v5/knowing_and_having.md` | Three levels of memory influence: information → salience → procedural constraint. Current architecture is Level 1. chunking.py is Level 3 (unused). Negative Eunoe proposal: retrieval bias from failure patterns. Marcus Aurelius connection: text informs but doesn't produce reflexes. | **Current** — synthesis of chunking.py + universal_substrate.md + Marcus Aurelius reading |
 
 **Open question**: How to fix retrieval skew without losing the echo chamber protections? max_level=2 was a necessary fix but prevents L3 from working.
 
@@ -87,13 +88,12 @@ Historical but contains patterns that recur.
 | `v4/universal_substrate.md` | Memory as MECHANISM not DATA. Experience should change the processor. | **Deep insight** — not yet implemented anywhere. The most radical proposal. |
 | `v4/retriever_patch.md`, `v4/retriever_bugfix_patch.md` | break→continue bug, missing state field | **Fixed** in V4, not relevant to V5 |
 | `v4/research_notes.md` | SOAR, ACT-R survey. Four gaps: no habits, static activation, no emotional inhibition, no retrieval threshold | **Informative** — some addressed in V5, some not |
-| `v4/knowing_and_having.md` | Three levels of memory influence: information → salience → procedural constraint. Current architecture is Level 1. chunking.py is Level 3 (unused). Negative Eunoe proposal for retrieval bias from failures. Marcus Aurelius connection: text informs but doesn't produce reflexes. | **Current** — synthesis of chunking.py + universal_substrate.md + Marcus Aurelius reading |
 | `v4/weekend_brief.md` | Meta-amnesia: researched same issues twice without knowing. Consolidation failure. | **Warning** — this index exists to prevent exactly this |
 | `v4/integration_proposal.md` | Adapter pattern for retriever replacement | **Historical** |
 
 ## Cross-cutting themes
 
-1. **Memory as mechanism** (v4/universal_substrate.md, v4/knowing_and_having.md) — the deepest unsolved problem. Everything else treats memory as data that a fixed processor reads. Redozubov says memory should change the processor. Three levels: information (Level 1, works), salience (Level 2, partial), procedural constraint (Level 3, missing). The same insight rediscovered 5 times across 1300 days.
+1. **Memory as mechanism** (v4/universal_substrate.md, v5/knowing_and_having.md) — the deepest unsolved problem. Everything else treats memory as data that a fixed processor reads. Redozubov says memory should change the processor. Three levels: information (Level 1, works), salience (Level 2, partial), procedural constraint (Level 3, missing). The same insight rediscovered 5 times across 1300 days.
 
 2. **Context diversity vs echo chamber** — two forces in tension. Diverse retrieval prevents loops, but max_level=2 prevents higher abstraction. Need a solution that allows L3+ without the node-accumulation problem.
 
