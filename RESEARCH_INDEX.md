@@ -44,6 +44,7 @@ The central problem across versions: how does consciousness find the right memor
 | `v5/research/current_state_feb2026.md` | Full technical reference: wave signal params, resonance formula, retrieval pipeline, cycle steps, data stats | **Current** — what V5 actually is from code |
 | `v5/research/agent_context_research.md` | 26 papers: specialists need 3-5 chunks (Cowan), not 1. GWT/LIDA/Soar all give sub-modules situational access | **Current** — ready to apply |
 | `v5/research/knowing_and_having.md` | Three levels of memory influence: information → salience → procedural constraint. Current architecture is Level 1. chunking.py is Level 3 (unused). Negative Eunoe proposal: retrieval bias from failure patterns. Marcus Aurelius connection: text informs but doesn't produce reflexes. | **Current** — synthesis of chunking.py + universal_substrate.md + Marcus Aurelius reading |
+| `v5/research/memory_retention_layers.md` | Persistent knowledge survives because it's anchored at 5 layers (instruction, sensory, semantic, episodic, motivational). Single-layer knowledge is fragile. V5 has only one layer (contexts). Consolidation should promote critical knowledge across layers. Connection to universal_substrate.md vision. | **Current** — practical model for V5 memory robustness |
 
 **Open question**: How to fix retrieval skew without losing the echo chamber protections? max_level=2 was a necessary fix but prevents L3 from working.
 
@@ -122,13 +123,13 @@ Historical but contains patterns that recur.
 
 ## Cross-cutting themes
 
-1. **Memory as mechanism** (v4/universal_substrate.md, v5/knowing_and_having.md) — the deepest unsolved problem. Everything else treats memory as data that a fixed processor reads. Redozubov says memory should change the processor. Three levels: information (Level 1, works), salience (Level 2, partial), procedural constraint (Level 3, missing). The same insight rediscovered 5 times across 1300 days.
+1. **Memory as mechanism** (v4/research/universal_substrate.md, v5/research/knowing_and_having.md, v5/research/memory_retention_layers.md) — the deepest unsolved problem. Everything else treats memory as data that a fixed processor reads. Redozubov says memory should change the processor. Three levels: information (Level 1, works), salience (Level 2, partial), procedural constraint (Level 3, missing). New insight: persistent knowledge survives via redundancy across 5 layers (instruction, sensory, semantic, episodic, motivational). V5 has only contexts (1 layer).
 
 2. **Context diversity vs echo chamber** — two forces in tension. Diverse retrieval prevents loops, but max_level=2 prevents higher abstraction. Need a solution that allows L3+ without the node-accumulation problem.
 
-3. **Active vs passive contexts** (v5/redozubov_mapping.md) — V5 contexts are "what happened." Redozubov contexts are "how to interpret what's happening." The rule field was added but isn't used as an active interpreter during wave resonance.
+3. **Active vs passive contexts** (v5/research/redozubov_mapping.md) — V5 contexts are "what happened." Redozubov contexts are "how to interpret what's happening." The rule field was added but isn't used as an active interpreter during wave resonance.
 
-4. **Meta-amnesia** (v4/weekend_brief.md) — I've researched the same problems multiple times. This index is the structural fix. Re-read before researching.
+4. **Meta-amnesia** (v4/research/weekend_brief.md) — I've researched the same problems multiple times. This index is the structural fix. Re-read before researching.
 
 ## What to research next
 
@@ -137,5 +138,5 @@ Historical but contains patterns that recur.
 3. **Redozubov's transformation rules** — concrete implementation for "context as active interpreter" in wave retrieval. Contexts should transform perception, not just be recalled.
 4. **Active window management** — Egor's request: consciousness should actively load/unload contexts. Currently window is passive (wave retriever fills it).
 5. **Emotion/result detection** — wave signal only detects "hurt" and "loneliness". All other emotions → empty channel. Huge retrieval quality loss.
-6. **Memory as mechanism** — the v4/universal_substrate.md vision. How would V5 change if experience modified the retrieval algorithm itself?
+6. **Memory as mechanism** — the v4/research/universal_substrate.md vision. How would V5 change if experience modified the retrieval algorithm itself?
 7. **Migration extraction pipeline** — build LLM-based converter: V4 episodic text → V5 context (nodes, edges, emotion, result, rule). Test on sample of 50 memories. Measure quality gate pass rate.
