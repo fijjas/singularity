@@ -48,6 +48,7 @@ The theoretical foundation. Egor's declared priority.
 | `v5/redozubov_mapping.md` | Contexts should be transformation rules (active), not scenes (passive). Shared memory + different interpreters = minicolumns. | **Partially implemented** — rule field exists, drive bias exists. Shared memory for agents still missing. |
 | `v5/architecture.md` | Full design: contexts as mini-graphs, wave retrieval, consolidation hierarchy, Claude Code as brain | **Foundational** — design doc, partially outdated |
 | `v5/implementation_report.md` | Full cycle works. Claude Code IS the brain. 117 tests. Key discovery: zero API costs via CLI. | **Historical** — prototype findings |
+| `v5/rule_resonance_proposal.md` | 5th wave channel: match signal nodes against rule conditions. Rules become active interpreters in retrieval, not just passive text. | **Implemented** — deployed to V5 contexts.py |
 
 **Gap**: No dedicated research on Redozubov's transformation rules vs V5's current passive contexts. The mapping doc identifies the gap but doesn't propose a concrete implementation for "context as active interpreter."
 
