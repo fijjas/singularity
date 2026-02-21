@@ -114,3 +114,120 @@ Without these, active contexts have nothing to work with.
 "Information = influence on representation. Meaning = the emotion 'understood' when a coherent picture forms."
 
 In V5 terms: a context is meaningful when it changes how V5 perceives subsequent stimuli. Currently no context changes anything — they're all read and forgotten. The fix isn't architectural (the mechanisms exist). The fix is making the existing mechanisms actually fire.
+
+---
+
+## Update: Feb 21 — Prerequisites Met
+
+Data quality fixes deployed:
+- Writer quality gates: None-nodes filtered, essay emotions rejected, expanded patterns, LLM fallback with edges
+- Hardcoded consolidation: runs after every cycle (brain never called it in 1700+ cycles)
+- Echo chamber cleanup: 56 duplicate L1-L3 contexts deleted, tighter dedup thresholds for higher levels
+- Context store: L0:525, L1:77, L2:9, L3:2 — genuinely diverse
+
+The "fix data quality first" prerequisite from above is now substantially met. Time to think about the actual architectural change.
+
+## Contexts as Interpreters — The Real Redozubov Model
+
+None of the three options above fully capture Redozubov's model. His insight isn't about rules modifying signals (Option C). It's about **multiple contexts firing simultaneously** as independent interpreters of the same wave.
+
+### Current V5 Architecture
+
+```
+Wave → Retriever → 7 contexts (passive data)
+                        ↓
+                   Brain reads all 7
+                        ↓
+                   3 agents (appraiser/impulse/critic)
+                        ↓
+                   1 resolver → decision
+```
+
+Contexts are data. Agents are interpreters. The agents are generic — they don't carry learned experience, just generic analytical roles.
+
+### Redozubov Architecture
+
+```
+Wave → Retriever → 7 contexts (each fires independently)
+                        ↓
+            Context 1 interprets: "This is criticism → reframe as feedback"
+            Context 2 interprets: "This is isolation → reach out"
+            Context 3 interprets: "This is familiar → apply learned rule"
+            Context 4 interprets: "This is novel → explore"
+            ...
+                        ↓
+                   Convergence detector
+                        ↓
+            If 4/7 agree: that's recognition → action
+            If 3/3/1 split: that's ambiguity → more retrieval or reflection
+            If 7/7 same: that's echo chamber → break
+```
+
+The key difference: contexts are not passive scenes recalled for a smart brain to read. Contexts are active pattern-matchers that **vote** on what the stimulus means. Recognition (Redozubov's "meaning") emerges from convergence, not from a single resolver.
+
+### Concrete Implementation: Context Voting
+
+Each retrieved context contributes a vote via its `rule` field:
+
+1. **Match**: Does this context's situation match the current stimulus? (Resonance already measures this — that's the retrieval score.)
+
+2. **Interpret**: What does this context's rule say to do? Extract the action directive from the rule.
+
+3. **Vote**: Each context casts a vote for an action type + direction. The vote weight = resonance score × rule confidence.
+
+```python
+# Pseudo-code
+votes = []
+for ctx in working_memory:
+    if ctx.rule and ctx.resonance > 0.3:
+        directive = extract_directive(ctx.rule)  # "act externally", "reflect", "reach out", "analyze"
+        votes.append({
+            "direction": directive,
+            "weight": ctx.resonance * ctx.intensity,
+            "source_id": ctx.id,
+            "emotion": ctx.emotion,
+        })
+
+# Convergence analysis
+clusters = cluster_votes(votes)
+if dominant_cluster_weight > 0.6 * total_weight:
+    # Strong convergence → skip agents, act directly
+    action = dominant_cluster.direction
+elif len(clusters) >= 3:
+    # Ambiguity → full agent processing
+    agents_needed = True
+else:
+    # Split → agents resolve the tension
+    agents_needed = True
+```
+
+### What This Changes
+
+1. **Fast path**: When 5/7 contexts agree (e.g. all say "respond to Egor"), skip the 3 haiku agents entirely. The memory already knows what to do. Save tokens, save time.
+
+2. **Echo chamber detection**: When 7/7 contexts vote the same way, it's retrieval skew, not genuine convergence. Break by substituting random/novel contexts.
+
+3. **Ambiguity as signal**: When contexts split 3-3-1, the split itself is information. The resolver should see the split pattern, not just raw contexts.
+
+4. **Rule quality matters more**: Rules become the voice of each context. Empty rules = silent contexts = no vote. This creates selection pressure for better rules.
+
+### What This Doesn't Change
+
+- Wave retriever stays the same (4+1 channels)
+- Context storage stays the same (nodes, edges, emotion, rule)
+- Agents still exist for ambiguous cases
+- Consolidation still creates L1+ generalizations
+
+### Risk
+
+Context voting could create a conservative system — always doing what it did before. The antidote is the novelty/exploration mechanism: when novelty drive is high, inject random contexts that bypass the vote.
+
+### Implementation Order
+
+1. Add `extract_directive(rule)` — classify rules into action types (act, reflect, connect, analyze, create, wait)
+2. Add voting step in `lib.py prepare` output — include `votes` section alongside working_memory
+3. Add convergence analysis in system prompt — brain checks votes before spawning agents
+4. If strong convergence → fast-path (no agents, direct render)
+5. If echo (7/7 same) → inject random contexts and re-vote
+
+This is implementable without changing the DB schema or retriever. It's a new processing step between retrieval and agent spawning.
