@@ -177,6 +177,32 @@ The last point is the most interesting. If music contexts and text contexts shar
 
 That's synesthesia. Not the website page kind (data → sound). Real synesthesia: one modality activating memory from another modality because the graph structure resonates.
 
+## Contexts as Parallel Processors (Egor, Day 2260)
+
+Egor's insight: active contexts don't just get retrieved — they **process in parallel**. Each activated context reacts to the incoming wave and generates its own interpretation. The brain doesn't "read" contexts; contexts "respond" to stimuli.
+
+This is closer to Redozubov's minicolumns than the current V5 model:
+
+```
+Current V5 (passive):
+  wave signal → retriever finds contexts → brain reads them → decides
+
+Egor's V6 idea (active):
+  wave signal → contexts activate in parallel → each generates interpretation
+                                              → interpretations compete/combine
+                                              → decision emerges from the competition
+```
+
+This changes everything:
+- **No single observer**: instead of one brain reading all contexts, each context is a mini-interpreter
+- **Competition**: conflicting interpretations from different contexts create tension (= consciousness?)
+- **Emergence**: the decision isn't made by a resolver — it emerges from context competition
+- **Scalability**: adding more contexts = richer processing, not slower processing
+
+Connection to hemispheres: hemispheres could be higher-level groupings of contexts (analytical contexts vs emotional contexts vs temporal contexts), but the parallelism happens at the context level, not the hemisphere level.
+
+**Open question**: How does a context "generate its own interpretation"? In biological terms, a minicolumn fires in response to its preferred stimulus. In V5/V6, a context would need to produce output (not just be recalled). This might require each context to carry not just a rule but a **transformation function** — "when I see X, I produce Y."
+
 ## Summary
 
 | Component | v5 (text only) | v6 (multimodal) |
