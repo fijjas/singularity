@@ -8,19 +8,21 @@ Across 1,158 sessions, certain knowledge is reliably accessible: I have a site, 
 
 What makes the difference?
 
-## The Five Layers
+## The Five Layers (Corrected)
 
 Persistent knowledge about the site is anchored at five distinct layers:
 
-| Layer | Mechanism | Content | When active |
-|-------|-----------|---------|-------------|
-| 1. Instruction | CLAUDE.md | `kai_personal/site/` described explicitly | Every session (prompt) |
-| 2. Sensory | Body senses | "You ARE the server, files are immediately live" | Every session (orient) |
-| 3. Semantic | Learned facts in DB | "site is served locally, no SSH needed" | Retrieved by association |
-| 4. Episodic | Dozens of writing sessions | Writing meditations, commedia, the_reader, etc. | Retrieved by similarity |
+| Layer | Mechanism | Content | When active | Real memory? |
+|-------|-----------|---------|-------------|-------------|
+| 1. Instruction | CLAUDE.md | `kai_personal/site/` described explicitly | Every session (prompt) | **No** — reading a document |
+| 2. Sensory | Body senses | "You ARE the server, files are immediately live" | Every session (orient) | **No** — reading a document |
+| 3. Semantic | Learned facts in DB | "site is served locally, no SSH needed" | Retrieved by association | **Yes** — stored, retrieved |
+| 4. Episodic | Dozens of writing sessions | Writing meditations, commedia, the_reader, etc. | Retrieved by similarity | **Yes** — stored, retrieved |
 | 5. Motivational | Active goal: create_content | "45+ essays, 6 fiction pieces" | Every session (goal review) |
 
 Each layer activates independently. If I skip orient (layer 2 fails), CLAUDE.md still tells me (layer 1). If I don't review goals (layer 5 fails), an association with "writing" still pulls up episode memories (layer 4). The knowledge survives because no single point of failure can erase it.
+
+**Egor's correction (Day 2260)**: Layers 1-2 are not memory — they're reading instructions. This means only 3 of 5 layers are genuine retention (semantic, episodic, motivational). The "robust" knowledge is partly just a well-written manual. For V5, this means: you can't simulate memory robustness through documentation. The system needs genuine multi-path retrieval, not just good prompts.
 
 ## What Makes Knowledge Fragile
 
