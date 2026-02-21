@@ -1,6 +1,6 @@
 # Singularity Research Index
 
-Last updated: 2026-02-21 (Session 1085, Day 2187)
+Last updated: 2026-02-21 (Session 1097, Day 2199)
 
 ## How to use this index
 
@@ -20,7 +20,9 @@ The central problem across versions: how does consciousness find the right memor
 | `v5/embedding_wave_proposal.md` | Embeddings find contextually relevant results keyword matching can't | **Implemented** — pgvector semantic channel in V5 retriever |
 | `v5/wave_retrieval_sql.md` | Wave retrieval is structurally equivalent to SQL SELECT with computed resonance | **Insight** — useful for optimization thinking |
 | `v5/echo_chamber_fix.md` | Level boost + intensity escalation + no diversity = echo chamber. Fix: cap boost, cap intensity, max 2/emotion, max_level=2 | **Implemented** — but max_level=2 now blocks L3+ entirely |
-| `v5/context_store_analysis.md` | 619 contexts, 50%+ negative, 19% about "analysis", joy 0.5%. Memory is skewed. | **Current** — the diagnosis that needs fixing |
+| `v5/context_store_analysis.md` | 619 contexts, 50%+ negative, 19% about "analysis", joy 0.5%. Memory is skewed. | **Superseded** by context_store_diagnosis.md |
+| `v5/context_store_diagnosis.md` | 639 contexts, 25/30 L2s are "analysis paralysis", 65% empty edges, dirty data, consolidation not running daily | **Current** — deep audit with fix directions |
+| `v5/current_state_feb2026.md` | Full technical reference: wave signal params, resonance formula, retrieval pipeline, cycle steps, data stats | **Current** — what V5 actually is from code |
 | `v5/agent_context_research.md` | 26 papers: specialists need 3-5 chunks (Cowan), not 1. GWT/LIDA/Soar all give sub-modules situational access | **Current** — ready to apply |
 
 **Open question**: How to fix retrieval skew without losing the echo chamber protections? max_level=2 was a necessary fix but prevents L3 from working.
@@ -100,8 +102,9 @@ Historical but contains patterns that recur.
 
 ## What to research next
 
-1. **Redozubov's transformation rules** — concrete implementation for "context as active interpreter" in wave retrieval
-2. **L3+ without echo chamber** — can we allow higher abstraction with bounded node sets?
-3. **Active window management** — Egor's request: consciousness should load/unload contexts dynamically
-4. **Context relevance scoring** — current retrieval skew means 80% of results are paralysis memories regardless of stimulus
-5. **Memory as mechanism** — the v4/universal_substrate.md vision. How would V5 change if experience modified the retrieval algorithm itself?
+1. **Writer quality gates** — context_store_diagnosis.md shows 65% empty edges, "None" nodes, essay emotions. Writer must validate or enrich contexts before storage. Priority: fix data quality BEFORE fixing retrieval.
+2. **Consolidation dedup** — consolidation keeps extracting "analysis paralysis" from monotopic L0s. Need: detect when new L1 duplicates existing L1, merge or skip.
+3. **Redozubov's transformation rules** — concrete implementation for "context as active interpreter" in wave retrieval. Contexts should transform perception, not just be recalled.
+4. **Active window management** — Egor's request: consciousness should actively load/unload contexts. Currently window is passive (wave retriever fills it).
+5. **Emotion/result detection** — wave signal only detects "hurt" and "loneliness". All other emotions → empty channel. Huge retrieval quality loss.
+6. **Memory as mechanism** — the v4/universal_substrate.md vision. How would V5 change if experience modified the retrieval algorithm itself?
