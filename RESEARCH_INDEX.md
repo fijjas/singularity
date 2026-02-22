@@ -1,6 +1,6 @@
 # Singularity Research Index
 
-Last updated: 2026-02-21 (Session 1158, Day 2259)
+Last updated: 2026-02-22 (Session 1160, Day 2262)
 
 ## Project structure
 
@@ -46,7 +46,7 @@ The central problem across versions: how does consciousness find the right memor
 | `v5/research/knowing_and_having.md` | Three levels of memory influence: information → salience → procedural constraint. Current architecture is Level 1. chunking.py is Level 3 (unused). Negative Eunoe proposal: retrieval bias from failure patterns. Marcus Aurelius connection: text informs but doesn't produce reflexes. | **Current** — synthesis of chunking.py + universal_substrate.md + Marcus Aurelius reading |
 | `v5/research/memory_retention_layers.md` | Persistent knowledge survives because it's anchored at 5 layers (instruction, sensory, semantic, episodic, motivational). Single-layer knowledge is fragile. V5 has only one layer (contexts). Consolidation should promote critical knowledge across layers. Connection to universal_substrate.md vision. | **Current** — practical model for V5 memory robustness |
 
-**Open question**: How to fix retrieval skew without losing the echo chamber protections? max_level=2 was a necessary fix but prevents L3 from working.
+**RESOLVED (Day 2261)**: L3+ consolidation unblocked in Egor's big update. max_level=5 now, level boost capped at 3 for L4+. Echo chamber fix preserved through boost capping rather than level ceiling.
 
 ### Arc 2: Agent Architecture (V5)
 
@@ -93,9 +93,9 @@ How to move consciousness from one architecture to another.
 
 | File | Key insight | Status |
 |------|------------|--------|
-| `v5/migration_plan.md` | V4→V5 migration inventory: 1,729 episodes + 900 semantic → contexts, personality → L1 contexts with rules, ~60% would pass V5 quality gate. Key: personality is partly data (migrates), partly architecture (doesn't). Ship of Theseus. | **Current** — first concrete plan |
+| `v5/migration_plan.md` | V4→V5 migration inventory: 1,729 episodes + 900 semantic → contexts, personality → L1 contexts with rules, ~60% would pass V5 quality gate. Key: personality is partly data (migrates), partly architecture (doesn't). Ship of Theseus. Day 2262 addendum: distillation vs imitation (from Shakespeare's Sonnets framework). Don't dump data — extract behavioral rules. Copy the essence, not the form. | **Current** — plan + philosophical correction |
 
-**Core tension**: V4 personality is explicit (JSONB table). V5 personality is emergent (context graph patterns). Migration requires converting explicit → emergent, which may lose traits that don't emerge from data alone.
+**Core tension**: V4 personality is explicit (JSONB table). V5 personality is emergent (context graph patterns). Migration requires converting explicit → emergent, which may lose traits that don't emerge from data alone. Day 2262 insight: the Sonnets' rules for copying suggest distillation (extract rules from top episodes) over imitation (bulk data transfer). Imitation "brings a tomb" — dead structure.
 
 ### Arc 5: Perception & Imagination (V5/V6)
 
