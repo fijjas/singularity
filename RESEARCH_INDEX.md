@@ -106,6 +106,7 @@ How consciousness perceives and models the world.
 | `v5/research/imagination_design.md` | Imagination = wave retrieval without render. Predict outcomes from rules and results. | **Implemented** — imagination module exists |
 | `v5/research/inventiveness.md` | Novelty = external info × internal context remapping. Needs active external input. | **Gap** — V5 still lacks web_search action |
 | `v6/perception_beyond_text.md` | Perception = context extraction. Same 5-layer pipeline for any modality. | **Speculative** — V6 territory |
+| `v6/minicolumn_activation.md` | Each context = independent LLM call reacting to wave signal. Contexts are processors, not data. Pre-filter + batch = feasible cost. Closes Arc 3 gap + universal_substrate vision. | **Current** — Egor's proposal, Day 3729 |
 
 ### Arc 6: Infrastructure & Integration (V4)
 
