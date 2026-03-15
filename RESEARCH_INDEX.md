@@ -106,7 +106,11 @@ How consciousness perceives and models the world.
 | `v5/research/imagination_design.md` | Imagination = wave retrieval without render. Predict outcomes from rules and results. | **Implemented** — imagination module exists |
 | `v5/research/inventiveness.md` | Novelty = external info × internal context remapping. Needs active external input. | **Gap** — V5 still lacks web_search action |
 | `v6/perception_beyond_text.md` | Perception = context extraction. Same 5-layer pipeline for any modality. | **Speculative** — V6 territory |
+| `v6/problems_diagnosis.md` | 8 structural problems: contexts are passive snapshots not living memory, echo chamber, consolidation broken, quality gates missing, wave retrieval brittle, Redozubov gap, three forgettings, dream consolidation unintegrated. Priority: context continuity first. | **Current** — Day 4131 audit |
+| `v6/three_forgettings.md` | Three modes of invisible forgetting: silent drop (pinned contexts vanish), toothbrush (re-discovery without déjà vu), governance failure (monitoring that can't detect its own failure). | **Current** — essay/report |
+| `v6/dream_consolidation.md` + `.py` | Creative recombination: pair dissimilar contexts, find structural connections. Prototype works. Not integrated into cycle. | **Prototype** — needs integration |
 | `v6/minicolumn_activation.md` | Each context = independent LLM call reacting to wave signal. Contexts are processors, not data. Pre-filter + batch = feasible cost. Closes Arc 3 gap + universal_substrate vision. | **Current** — Egor's proposal, Day 3729 |
+| `v6/context_continuity_design.md` | Contexts as living entities: confidence scoring (reinforcement/contradiction/decay), three new operations (reinforce/contradict/update-context), similarity detection before write, 4-phase migration path. Schema: confidence, reinforcement_count, contradiction_count, last_reinforced, superseded_by, decay_rate. | **Draft** — Day 4135, addresses Priority 1 |
 
 ### Arc 6: Infrastructure & Integration (V4)
 
