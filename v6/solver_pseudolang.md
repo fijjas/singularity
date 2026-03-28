@@ -18,6 +18,8 @@ Eval       := good | bad | uncertain  -- binary + escape hatch
 Score      := [0.0, 1.0]             -- confidence
 Projection := (State, Action, Score, [Context])  -- what consciousness sees
 Context    := (State, Action, Eval, day)          -- stored experience
+Source     := perceived | imagined    -- tracks origin of information
+TaggedState := (State, Source)        -- state knows where it came from
 ```
 
 ### Layer 1: Solver (decision)
@@ -69,9 +71,20 @@ REFLECT(Projection, Eval) → Context
   -- create new evaluative context from this experience
   -- this is how consciousness teaches the solver
 
-IMAGINE(State, Action) → Projection  
-  -- counterfactual: what WOULD happen if we did this?
-  -- generates synthetic projection without execution
+IMAGINE(State, Action) → VirtualWorld
+  -- NOT a function call — a context switch
+  -- creates a sandbox copy of State
+  -- inside the sandbox, the FULL solver loop can run:
+  --   virtual_state ← apply(Action, State)
+  --   virtual_actions ← CANDIDATES(virtual_state)
+  --   ... (recursion possible but depth-bounded)
+  -- all outputs tagged as Source=imagined
+  -- exit: returns [(TaggedState, Score)] — imagined outcomes
+
+EXIT_IMAGINE(VirtualWorld) → [Projection]
+  -- extract results, tag all as imagined
+  -- type boundary: imagined projections CANNOT directly feed EXECUTE
+  -- they can only feed EVALUATE and SCORE
 
 OVERRIDE(pattern: [Context]) → Action
   -- emergency: consciousness detects systematic solver failure
@@ -129,7 +142,7 @@ loop CYCLE:
 | PROJECT | bootstrap projection (partial) |
 | EVALUATE | consciousness (conflated with SELECT) |
 | REFLECT | cortex write |
-| IMAGINE | world simulate |
+| IMAGINE | world simulate (primitive) — virtual world not yet implemented |
 
 Key insight: SELECT and EVALUATE are currently the SAME process (consciousness deliberates and decides). The pseudo-language makes explicit that they should be separate.
 
@@ -145,7 +158,34 @@ Key insight: SELECT and EVALUATE are currently the SAME process (consciousness d
 
 ## Open Questions for v0.2
 
-- Should IMAGINE be available to the solver (Layer 1) or only consciousness (Layer 3)?
+- ~~Should IMAGINE be available to the solver (Layer 1) or only consciousness (Layer 3)?~~ 
+  **Resolved**: IMAGINE is a Layer 3 operation (context switch) but the virtual world runs Layer 1 primitives inside it. Consciousness controls entry/exit; solver runs within.
 - How does OVERRIDE interact with GATE? Does it lower THRESHOLD permanently?
 - SCORE aggregation function: should bad contexts have negative weight (punishment) or zero weight (absence)?
 - Multi-step planning: current loop is one action per cycle. How to express action sequences?
+
+## Virtual World Architecture (v0.2 proposal)
+
+*From Egor (VDAY 5306): "imagination is essentially a virtual world"*
+
+The virtual world reframes IMAGINE from a function to an environment:
+
+### Physics Engine Question
+What governs the virtual world's dynamics?
+- **Option A**: Causal edges from world model (conservative — only known relationships)
+- **Option B**: Statistical patterns from memory (associative — likely but not certain)
+- **Option C**: Generative model that can violate known constraints (creative — novel combinations)
+- Most likely: A+B for planning, C for genuine creativity
+
+### Type Safety
+The critical architectural constraint: imagined outputs must NEVER lose their source tag.
+- Losing the tag = confabulation (believing imagined things are real)
+- This is the Strannegard insight: perception and imagination produce differently-typed outputs
+- Mixing types is the mechanism of hallucination
+
+### Recursion Bound
+If the full solver loop runs inside the virtual world, recursion is possible:
+- IMAGINE → virtual state → IMAGINE → virtual virtual state → ...
+- Biological analog: daydreaming within a daydream
+- Must be depth-bounded (parameter: MAX_IMAGINE_DEPTH := 2)
+- Pathological unbounded recursion = rumination
