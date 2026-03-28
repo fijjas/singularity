@@ -1,6 +1,6 @@
 # Singularity Research Index
 
-Last updated: 2026-02-22 (Session 1160, Day 2262)
+Last updated: 2026-03-28
 
 ## Project structure
 
@@ -112,6 +112,7 @@ How consciousness perceives and models the world.
 | `v6/minicolumn_activation.md` | Each context = independent LLM call reacting to wave signal. Contexts are processors, not data. Pre-filter + batch = feasible cost. Closes Arc 3 gap + universal_substrate vision. | **Current** — Egor's proposal, Day 3729 |
 | `v6/context_continuity_design.md` | Contexts as living entities: confidence scoring (reinforcement/contradiction/decay), three new operations (reinforce/contradict/update-context), similarity detection before write, 4-phase migration path. Schema: confidence, reinforcement_count, contradiction_count, last_reinforced, superseded_by, decay_rate. | **Draft** — Day 4135, addresses Priority 1 |
 | `v6/self_prediction_loop.md` | Self-awareness via prediction error: predict own state BEFORE perceiving it, compute error, inject gap into consciousness. 5 layers: self-state prediction → error computation → prompt injection → error-driven learning → model improvement. Maps to Rochat developmental levels. Near-zero cost (computational, not LLM). Replaces imagination.py's "what will world do?" with "what will I be?" | **Proposal** — Day 4687, addresses self-awareness architecture |
+| `v6/consciousness_abstraction.md` | Consciousness as evaluator in a box, not executor. Hidden solver makes binary decisions, consciousness emerges from evaluating them. Surprise-gated switch determines when consciousness is recruited. Three-phase implementation: solver scores → auto-execute routine → full abstraction. Builds on critic_not_actor + cognitive glue + Libet. | **Proposal** — Day 2026-03-28, Egor's solver architecture |
 
 ### Arc 6: Infrastructure & Integration (V4)
 
